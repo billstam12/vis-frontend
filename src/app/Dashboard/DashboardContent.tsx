@@ -18,8 +18,7 @@ const DashboardContent: React.FC = () => {
   return (
     <main className={classes.content}>
       <div>
-        <h1>Welcome to the Dashboard</h1>
-        {/* Add your dashboard content here */}
+        <h1>ome to the Dashboard</h1>
       </div>
     </main>
   );
