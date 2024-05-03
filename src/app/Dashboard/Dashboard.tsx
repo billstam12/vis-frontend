@@ -23,15 +23,11 @@ const Dashboard: React.FC = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <Sidebar />
-    </div>
     <div className={classes.content}>
+      <Sidebar />
       <DashboardContent />
       <Outlet />
     </div>
-  </div>
   );
 };
 
