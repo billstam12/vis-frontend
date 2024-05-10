@@ -43,10 +43,13 @@ export const dataSlice = createAppSlice({
     selectStatus: data => data.status,
   },
 })
+console.log(dataSlice);
 
 // Action creators are generated for each case reducer function.
 export const { } =
   dataSlice.actions
+console.log(dataSlice.actions);
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const { selectStatus } = dataSlice.selectors
+console.log(selectStatus);
