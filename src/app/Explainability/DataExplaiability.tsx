@@ -1,102 +1,108 @@
-// import React, { useState } from 'react';
-// import { useTheme } from '@mui/material/styles';
-// import { VegaLite } from 'react-vega'; 
-// import Box from '@mui/material/Box';
-// import InputLabel from '@mui/material/InputLabel';
-// import MenuItem from '@mui/material/MenuItem';
-// import FormControl from '@mui/material/FormControl';
-// import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Container, Grid } from "@mui/material";
+import CounterFactualsTable from "./Components/CounterFactualsTable";
+import GenericPlot from "./Components/GenericPlot";
+import Sidebar from "../Dashboard/Sidebar";
+import { fetchDataForAleModelSlice, fetchDataForAlePipelineSlice, fetchDataForPdp2DPipelineSlice, fetchDataForPdpModelSlice, fetchDataForPdpPipelineSlice } from "../../store/data/explainabilitySlice";
 
-// const DataExplainability = () => {
-//   const theme = useTheme();
-//   const info = theme.palette.info.light;
-
-//   const [selectedGraph, setSelectedGraph] = useState(0); // Initially select the first graph (index 0)
-//   const handleChange = (event: SelectChangeEvent) => {
-//     setSelectedGraph(event.target.value as number);
-//   };
-//   const vegaLiteSpecs = [
-//     {
-//       description: 'A simple bar chart',
-//       data: {
-//         values: [
-//           { day: 'Mo', value: 80 },
-//           { day: 'Tu', value: 95 },
-//           { day: 'We', value: 70 },
-//           { day: 'Th', value: 42 },
-//           { day: 'Fr', value: 65 },
-//           { day: 'Sa', value: 55 },
-//           { day: 'Su', value: 78 }
-//         ]
-//       },
-//       mark: 'line',
-//       encoding: {
-//         x: { field: 'day', type: 'ordinal' },
-//         y: { field: 'value', type: 'quantitative' },
-//         color: { value: info }
-//       }
-//     },
-//     {
-//       description: 'Another simple bar chart',
-//       data: {
-//         values: [
-//           { month: 'Jan', value: 100 },
-//           { month: 'Feb', value: 150 },
-//           { month: 'Mar', value: 120 },
-//           { month: 'Apr', value: 180 },
-//           { month: 'May', value: 90 },
-//           { month: 'Jun', value: 110 },
-//           { month: 'Jul', value: 130 }
-//         ]
-//       },
-//       mark: 'bar',
-//       encoding: {
-//         x: { field: 'month', type: 'ordinal' },
-//         y: { field: 'value', type: 'quantitative' },
-//         color: { value: info }
-//       }
-//     }
-//   ];
-
-//   const handleGraphChange = (event) => {
-//     setSelectedGraph(Number(event.target.value));
-//   };
-
-//   return (
-//     <div>
-//       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        
-//         <Select value={selectedGraph} label="Age"onChange={handleGraphChange}>
-//         <MenuItem value={0}>Ten</MenuItem>
-//           <MenuItem value={1}>Twenty</MenuItem>
-//         </Select>
-//       </div>
-//       <div style={{ display: 'flex', justifyContent: 'center' }}>
-//         <VegaLite spec={vegaLiteSpecs[selectedGraph]} />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DataExplainability;
-
-
-
-import React, { Dispatch, useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchData } from "../../store/data/dataAPI";
-import { AppDispatch } from "../store";
-
-const DataExplainability = () => {
-
-  const dispatch = useDispatch<AppDispatch>();
-  const Data = useSelector((state: any) => state.data.data);
-  const loading = useSelector((state: any) => state.data.loading);
-  const error = useSelector((state: any) => state.data.error);
-  const ok=fetchData('f');
-  console.log("ok",);
-  console.log('Data',Data);
-
-
+const DataExplainability: React.FC = () => {
+  return (
+    <Container fixed>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <Sidebar/>
+        </Grid>
+        <Grid item xs={12}>
+          <h2>Hyperparameter Explainability</h2>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <h3>Hyperparameter Partial Dependence Plot (PDP)</h3>
+              <GenericPlot 
+                fetchDataThunk={fetchDataForPdpPipelineSlice} 
+                feature1="Model__lr" 
+                feature2={null}
+                xaitype="pipeline" 
+                method="pdp" 
+                xFieldName="HP"
+                yFieldName="Values"
+                mark="line"
+                xtype="nominal"
+                ytype="quantitative"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <h3>Hyperparamer Accumulated Local Effects (ALE)</h3>
+              <GenericPlot 
+                fetchDataThunk={fetchDataForAlePipelineSlice} 
+                feature1="Model__lr"
+                feature2={null}
+                xaitype="pipeline" 
+                method="ale" 
+                xFieldName="index" 
+                yFieldName="eff"
+                mark="line"
+                xtype="ordinal"
+                ytype="quantitative"
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <h2>Hyperparameter 2D Partial Dependence Plot (PDP)</h2>
+          <GenericPlot 
+            fetchDataThunk={fetchDataForPdp2DPipelineSlice} 
+            feature1="Model__optimizer" 
+            feature2="Model__lr"
+            xaitype="pipeline" 
+            method="pdp2d" 
+            xFieldName="x"
+            yFieldName="y"
+            mark="rect"
+            xtype="ordinal"
+            ytype="ordinal"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <h2>Misclassification Analysis</h2>
+          <CounterFactualsTable />
+        </Grid>
+        <Grid item xs={12}>
+          <h2>Feature Expainability</h2>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <h3>Feature Partial Dependence Plot (PDP)</h3>
+              <GenericPlot 
+                fetchDataThunk={fetchDataForPdpModelSlice} 
+                feature1="proto" 
+                feature2={null}
+                xaitype="model" 
+                method="pdp" 
+                xFieldName="ModelValues"
+                yFieldName="Effect"
+                mark="bar"
+                xtype="ordinal"
+                ytype="quantitative"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <h3>Feature Accumulated Local Effects (ALE)</h3>
+              <GenericPlot 
+                fetchDataThunk={fetchDataForAleModelSlice} 
+                feature1="rate" 
+                feature2={null}
+                xaitype="model" 
+                method="ale" 
+                xFieldName="rate"
+                yFieldName="eff"
+                mark="line"
+                xtype="quantitative"
+                ytype="quantitative"
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
+  );
 };
+
 export default DataExplainability;
