@@ -20,7 +20,7 @@ const Pdp2dModel = () => {
         try {
             setLoading(true);
             const response = await axios.post(
-                'http://localhost:8080/api/visualization/explainability/i2cat_desktop_features',
+                'http://leviathan.imsi.athenarc.gr:8080/api/visualization/explainability/i2cat_desktop_features',
                 {
                     "modelId": "UNSW_NB15_model",
                     "explainabilityType": xaitype,

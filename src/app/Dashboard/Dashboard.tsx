@@ -1,30 +1,38 @@
-import React from 'react';
-import { Theme } from '@mui/material/styles';
-import { createStyles, makeStyles } from '@mui/styles';
-import { Outlet } from 'react-router-dom';
+import { useEffect } from "react"
+import { RootState, useAppDispatch, useAppSelector } from "../../store/store"
+import { fetchPdpPipeline } from "../../store/slices/explainabilitySlice"
+import Grid from "@mui/material/Grid"
+import grey from "@mui/material/colors/grey"
+import DashboardTitle from "./dashboard-title"
+import DashboardItems from "./dashboard-items"
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    sidebar: {
-      // Adjust width, height, and other styles as needed
-    },
-    content: {
-      // Adjust width, height, and other styles as needed
-    },
-  })
-);
+const Dashboard = () => {
+//   const { pdppipeline } = useAppSelector(
+//     (state: RootState) => state.explainability,
+//   )
+//   const dispatch = useAppDispatch()
 
-const Dashboard: React.FC = () => {
-  const classes = useStyles();
+//   useEffect(() => {
+//     dispatch(
+//       fetchPdpPipeline({
+//         xaitype: "pipeline",
+//         method: "pdp",
+//         feature1: "Model__lr",
+//         feature2: "null",
+//       }),
+//     )
+//   }, [])
 
   return (
-    <div className={classes.content}>
-      <Outlet />
-    </div>
-  );
-};
+    <>
+      <Grid
+        sx={{ maxWidth: "100vw", minHeight: "100vh", bgcolor: grey[50], flexDirection: "column", display: "flex", rowGap: 10}}
+      >
+        <DashboardTitle />
+        <DashboardItems />
+      </Grid>
+    </>
+  )
+}
 
-export default Dashboard;
+export default Dashboard

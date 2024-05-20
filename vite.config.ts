@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     open: true,
+    proxy: {
+      "/api": "http://leviathan.imsi.athenarc.gr:8080",
+    },
   },
   test: {
     globals: true,

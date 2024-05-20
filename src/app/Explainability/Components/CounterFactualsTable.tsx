@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import InteractiveTablePlugin from './Helpers/InteractiveTablePlugin';
+// import InteractiveTablePlugin from './Helpers/InteractiveTablePlugin';
 import SelectHyperParams from './Selectors/SelectHyperParms';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchDataForCounterfactualsPipelineSlice } from '../../../store/data/explainabilitySlice';
+import { fetchDataForCounterfactualsPipelineSlice } from '../../../store/slices/explainabilitySlice';
 import { SelectChangeEvent } from '@mui/material';
 
 
@@ -23,7 +23,7 @@ const CounterFactualsTable = () => {
     if (data) {
         
         const columns = Object.keys(JSON.parse(data.cfs)[0]);
-        vegaLiteComponent = <InteractiveTablePlugin data={JSON.parse(data.cfs)} columns={columns} height={0} width={0} tableSize="middle" />;
+        // vegaLiteComponent = <InteractiveTablePlugin data={JSON.parse(data.cfs)} columns={columns} height={0} width={0} tableSize="middle" />;
     }
     const handleChange = (e: SelectChangeEvent<string>) => {
         setSelectedOption(e.target.value as string);

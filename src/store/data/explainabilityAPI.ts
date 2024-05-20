@@ -8,11 +8,11 @@
 
 
 import axios from "axios";
-import { IQuery } from "../../types/query.model";
+import { IQuery } from "../../shared/models/query.model";
 // A mock function to mimic making an async request for data
 export const fetchData = async (feature1: String, xaitype: String,method:String, feature2: string) => {
    const response = await axios.post(
-      'http://localhost:8080/api/visualization/explainability/i2cat_desktop_features',
+      'http://leviathan.imsi.athenarc.gr:8080/api/visualization/explainability/i2cat_desktop_features',
       {
         "modelId": "UNSW_NB15_model",
         "explainabilityType": xaitype,

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SelectChangeEvent, Switch, Typography } from '@mui/material';
 import { VegaLite } from 'react-vega';
 import SelectHyperParams from '../Selectors/SelectHyperParms';
-import { fetchDataForPdpPipelineSlice } from '../../../../store/data/explainabilitySlice';
+import { fetchDataForPdpPipelineSlice } from '../../../../store/slices/explainabilitySlice';
 
 const PdpPipeline = () => {
     const dispatch = useDispatch();

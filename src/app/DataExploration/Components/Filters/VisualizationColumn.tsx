@@ -8,9 +8,9 @@ const VisualizationColumn = ({ datasetName, onColumnChange }) => {
 
   useEffect(() => {
     if (datasetName) {
-      axios.get(`http://localhost:8080/api/visualization/data/${datasetName}/columns`)
+      axios.get(`http://leviathan.imsi.athenarc.gr:8080/api/visualization/data/${datasetName}/columns`)
         .then(response => {
-          const columnNames = response.data.map(column => column.name);
+          const columnNames = response.data.map((column: any) => column.name);
           setColumns(columnNames);
         })
         .catch(error => {

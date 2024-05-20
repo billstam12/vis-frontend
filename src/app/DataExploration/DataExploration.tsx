@@ -46,7 +46,7 @@ const DataExploration: React.FC = () => {
           <Grid container spacing={3}>
             <Grid item xs={6}>
               <h3>Confusion Matrix</h3>
-              <VisualizationComponent dataset={'cybersecurity_experiment_validation_results'} filters={filters} visualizationType={"confusionMatrix"}cols={['label','predicted']} />
+              <VisualizationComponent dataset={'cybersecurity_experiment_validation_results'} filters={filters} visualizationType={"confusionMatrix"} cols={['label','predicted']} />
             </Grid>
           </Grid>
         </Grid>
