@@ -4,10 +4,15 @@ import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
 import grey from "@mui/material/colors/grey"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
-const DashboardTitle = () => {
-  const [value, setValue] = useState(0)
+interface IDashboardTitle {
+  value: number
+  setValue: Dispatch<SetStateAction<number>>;
+}
+
+const DashboardTitle = (props: IDashboardTitle) => {
+  const {value, setValue} = props;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -20,17 +25,16 @@ const DashboardTitle = () => {
       xs={12}
       sx={{ px: 2, bgcolor: grey[300], display: "flex", height: "3.5rem" }}
     >
-      <Typography fontSize={"2rem"} sx={{ py: 1 }}>
+      {/* <Typography fontSize={"2rem"} sx={{ py: 1 }}>
         Experiment 1
       </Typography>
-      <Box sx={{ flex: 1 }} />
+      <Box sx={{ flex: 1 }} /> */}
       <Tabs
         value={value}
         onChange={handleChange}
-        aria-label="basic tabs example"
       >
-        <Tab label="Item One" />
-        <Tab label="Item Two" />
+        <Tab label="Feature Explanation" sx={{textTransform: "none"}} disableRipple />
+        <Tab label="Hyperparameters Explanation" sx={{textTransform: "none"}} disableRipple />
       </Tabs>
     </Grid>
   )

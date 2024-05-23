@@ -26,6 +26,13 @@
   color: rgb(112, 76, 182);
 }
 
+.vega-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @keyframes App-logo-float {
   0% {
     transform: translateY(0);

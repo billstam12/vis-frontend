@@ -1,12 +1,21 @@
-import { Typography } from "@mui/material"
 import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { VegaLite } from "react-vega"
 import { fetchPdpPipeline } from "../../store/slices/explainabilitySlice"
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store"
 import grey from "@mui/material/colors/grey"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import Menu from "@mui/material/Menu"
+import MenuItem from "@mui/material/MenuItem"
+import FilterAltIcon from "@mui/icons-material/FilterAlt"
+import MenuList from "@mui/material/MenuList"
+import ListItemText from "@mui/material/ListItemText"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import Divider from "@mui/material/Divider"
+import LinePlot from "../Plots/LinePlot"
 
 const createData = (data: any, xName: string, yName: string) => {
   const xAxis = JSON.parse(data.pdphpval)[0]
@@ -22,23 +31,32 @@ const DashboadItems = () => {
     (state: RootState) => state.explainability,
   )
   const dispatch = useAppDispatch()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
 
-  useEffect(() => {
-    dispatch(
-      fetchPdpPipeline({
-        xaitype: "pipeline",
-        method: "pdp",
-        feature1: "Model__lr",
-        feature2: "null",
-      }),
-    )
-  }, [])
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
-  useEffect(() => {
-    if (pdppipeline) {
-      console.log(createData(pdppipeline, "Model__lr", "Values"))
-    }
-  }, [pdppipeline])
+  // useEffect(() => {
+  //   dispatch(
+  //     fetchPdpPipeline({
+  //       xaitype: "pipeline",
+  //       method: "pdp",
+  //       feature1: "Model__lr",
+  //       feature2: "null",
+  //     }),
+  //   )
+  // }, [])
+
+  // useEffect(() => {
+  //   if (pdppipeline) {
+  //     console.log(createData(pdppipeline, "Model__lr", "Values"))
+  //   }
+  // }, [pdppipeline])
 
   return (
     <Grid container sx={{ px: 5, display: "flex", justifyContent: "center" }}>
@@ -55,102 +73,55 @@ const DashboadItems = () => {
             rowGap: 2,
           }}
         >
-          <Box className="Item-Title">
+          <Box
+            className="Item-Title"
+            sx={{ display: "flex", columnGap: 2, alignItems: "center" }}
+          >
             <Typography fontSize={"1.5rem"}>
               Hyperparameter Explainability
             </Typography>
+            <Button
+              id="basic-button"
+              variant="contained"
+              onClick={handleClick}
+              sx={{ textTransform: "none", fontSize: "1rem" }}
+            >
+              Filters
+              <FilterAltIcon />
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuList dense>
+                  <ListItemText sx={{px: 2, color: grey[600]}}>Select Hyperparameter</ListItemText>
+                <MenuItem>
+                  <ListItemText inset>Model__lr</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemText inset>Double</ListItemText>
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Box>
-          <Box className="Items-Container" sx={{ display: "flex", justifyContent: "space-around", py: 3, flexWrap: 'wrap', gap: 4 }}>
-            <Paper
-              className="Category-Item"
-              elevation={2}
-              sx={{ borderRadius: 2, width: "max-content", display: "flex", flexDirection: "column", rowGap: 2}}
-            >
-              <Box sx={{ p: 1.5 }}>
-                <Typography fontSize={"0.8rem"}>
-                  Partial Dependence Plot (PDP)
-                </Typography>
-              </Box>
-              <Box sx={{px: 2}}>
-                {pdppipeline !== null && (
-                  <VegaLite
-                    actions={false}
-                    spec={{
-                      width: 300,
-                      height: 200,
-                      data: {
-                        values: createData(pdppipeline, "Model__lr", "Values"),
-                      },
-                      mark: { type: "line", tooltip: true },
-                      encoding: {
-                        x: { field: "Model__lr", type: "nominal" },
-                        y: { field: "Values", type: "quantitative" },
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Paper>
-            <Paper
-              className="Category-Item"
-              elevation={2}
-              sx={{ borderRadius: 4, width: "max-content", display: "flex", flexDirection: "column", rowGap: 2,}}
-            >
-              <Box sx={{ p: 1.5 }}>
-                <Typography fontSize={"0.8rem"}>
-                  Partial Dependence Plot (PDP)
-                </Typography>
-              </Box>
-              <Box sx={{px: 2}}>
-                {pdppipeline !== null && (
-                  <VegaLite
-                    actions={false}
-                    spec={{
-                      width: 300,
-                      height: 200,
-                      data: {
-                        values: createData(pdppipeline, "Model__lr", "Values"),
-                      },
-                      mark: { type: "line", tooltip: true },
-                      encoding: {
-                        x: { field: "Model__lr", type: "nominal" },
-                        y: { field: "Values", type: "quantitative" },
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Paper>
-            <Paper
-              className="Category-Item"
-              elevation={2}
-              sx={{ borderRadius: 4, width: "max-content", display: "flex", flexDirection: "column", rowGap: 2}}
-            >
-              <Box sx={{ p: 1.5 }}>
-                <Typography fontSize={"0.8rem"}>
-                  Partial Dependence Plot (PDP)
-                </Typography>
-              </Box>
-              <Box sx={{px: 2}}>
-                {pdppipeline !== null && (
-                  <VegaLite
-                    actions={false}
-                    spec={{
-                      width: 300,
-                      height: 200,
-                      data: {
-                        values: createData(pdppipeline, "Model__lr", "Values"),
-                      },
-                      mark: { type: "line", tooltip: true },
-                      encoding: {
-                        x: { field: "Model__lr", type: "nominal" },
-                        y: { field: "Values", type: "quantitative" },
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Paper>
+          <Box
+            className="Items-Container"
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              p: 0,
+              flexWrap: "wrap",
+              gap: 1,
+              borderRadius: 4,
+            }}
+          >
+          <LinePlot width={"50%"} />
+          <LinePlot width={"50%"} />
           </Box>
         </Paper>
       </Grid>
