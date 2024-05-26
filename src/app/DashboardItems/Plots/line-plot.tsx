@@ -9,13 +9,16 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import { SetStateAction, useState } from "react"
 import FormControl from "@mui/material/FormControl"
+import { IPlotModel } from "../../../shared/models/plotmodel.model"
 
 interface ILineplot {
   width: string
+  plotModel: IPlotModel | null
+  options: string[]
 }
 
 const LinePlot = (props: ILineplot) => {
-  const { width } = props
+  const { width, plotModel, options } = props
   const [selectedFeature, setSelectedFeature] = useState<string>("Feature 1")
   const featureList = ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
 
@@ -26,6 +29,8 @@ const LinePlot = (props: ILineplot) => {
   }
 
   return (
+    <>
+    {console.log("options", options)}
     <Paper
       className="Category-Item"
       elevation={2}
@@ -40,39 +45,50 @@ const LinePlot = (props: ILineplot) => {
     >
       <Box sx={{ px: 1.5, pt: 1.5, display: "flex", alignItems: "center" }}>
         <Typography fontSize={"1rem"} fontWeight={600}>
-          Plot name
+          {plotModel?.plotName || "Plot name"}
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Tooltip title="This is going to contain the description of the plot that its been visualized">
+        <Tooltip title={plotModel?.plotDescr || "Description not available"}>
           <IconButton>
             <InfoIcon />
           </IconButton>
         </Tooltip>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", px: 1.5 }}>
-        <Typography fontSize={"0.8rem"}>Select Feature:</Typography>
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+        <Typography fontSize={"0.8rem"}>
+          {plotModel?.explainabilityType === "featureExplanation"
+            ? "Select Feature:"
+            : "Select Hyperparameter"}
+        </Typography>
+        <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
             value={selectedFeature}
             sx={{ fontSize: "0.8rem" }}
             onChange={handleFeatureSelection}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 250,
+                  maxWidth: 300,
+                },
+              },
+            }}
           >
-            {featureList.map(feature => (
-              <MenuItem value={feature}>{feature}</MenuItem>
+            {options.map(feature => (
+              <MenuItem key={`${plotModel?.plotName}-${feature}`} value={feature}>{feature}</MenuItem>
             ))}
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ width: "99%", px:1 }}>
+      <Box sx={{ width: "99%", px: 1 }}>
         <VegaLite
           actions={false}
-          style={{ width: "90%"}}
+          style={{ width: "90%" }}
           spec={{
-            width: 'container',
-            autosize: { type: "fit", contains: "padding", resize: true},
-            // height: 200,
+            width: "container",
+            autosize: { type: "fit", contains: "padding", resize: true },
             data: {
               values: [
                 { a: "A", b: 28 },
@@ -95,6 +111,7 @@ const LinePlot = (props: ILineplot) => {
         />
       </Box>
     </Paper>
+    </>
   )
 }
 

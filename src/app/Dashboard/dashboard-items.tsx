@@ -3,7 +3,6 @@ import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
 import { useEffect, useState } from "react"
 import { VegaLite } from "react-vega"
-import { fetchPdpPipeline } from "../../store/slices/explainabilitySlice"
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store"
 import grey from "@mui/material/colors/grey"
 import Typography from "@mui/material/Typography"
@@ -15,7 +14,7 @@ import MenuList from "@mui/material/MenuList"
 import ListItemText from "@mui/material/ListItemText"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import Divider from "@mui/material/Divider"
-import LinePlot from "../Plots/LinePlot"
+import LinePlot from "../DashboardItems/Plots/line-plot"
 
 const createData = (data: any, xName: string, yName: string) => {
   const xAxis = JSON.parse(data.pdphpval)[0]
@@ -27,9 +26,6 @@ const createData = (data: any, xName: string, yName: string) => {
 }
 
 const DashboadItems = () => {
-  const { pdppipeline } = useAppSelector(
-    (state: RootState) => state.explainability,
-  )
   const dispatch = useAppDispatch()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -40,23 +36,6 @@ const DashboadItems = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  // useEffect(() => {
-  //   dispatch(
-  //     fetchPdpPipeline({
-  //       xaitype: "pipeline",
-  //       method: "pdp",
-  //       feature1: "Model__lr",
-  //       feature2: "null",
-  //     }),
-  //   )
-  // }, [])
-
-  // useEffect(() => {
-  //   if (pdppipeline) {
-  //     console.log(createData(pdppipeline, "Model__lr", "Values"))
-  //   }
-  // }, [pdppipeline])
 
   return (
     <Grid container sx={{ px: 5, display: "flex", justifyContent: "center" }}>
@@ -120,7 +99,6 @@ const DashboadItems = () => {
               borderRadius: 4,
             }}
           >
-          <LinePlot width={"50%"} />
           <LinePlot width={"50%"} />
           </Box>
         </Paper>

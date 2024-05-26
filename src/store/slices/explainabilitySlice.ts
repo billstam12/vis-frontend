@@ -1,49 +1,38 @@
 import { createSlice, createAsyncThunk, isFulfilled, isPending, isRejected } from "@reduxjs/toolkit";
-import { fetchData } from "../data/explainabilityAPI";
 import axios from "axios";
-import { defaultValue } from "../../shared/models/explainability.request.model";
+import { IInitialization } from "../../shared/models/initialization.model";
+import { IPlotModel } from "../../shared/models/plotmodel.model";
+
+const handleGetExplanation = (initializationState: IInitialization | null, plotMod: IPlotModel) => {
+    if (initializationState) {
+      const newState: IInitialization = {
+        ...initializationState,
+        [plotMod.explainabilityType as keyof IInitialization]: {
+          ...initializationState[plotMod.explainabilityType as keyof IInitialization],
+          [plotMod.tableContents !== null ? "tables" : "plots"]: {
+            [plotMod.explanationMethod]: plotMod,
+          },
+        },
+      }
+      return newState
+    } else {
+      return null
+    }
+  }
 
 interface IExplainability {  
-    status: boolean;
-    data: any;
+    loading: string;
+    initLoading: boolean;
+    explInitialization: IInitialization | null;
     error: string | null;
-    pdppipeline: any;
-    pdpmodel: any;
-    alepipeline: any;
-    alemodel: any;
-    pdp2dpipeline: any;
-    counterfactualspipeline: any;
 }
 
 const initialState: IExplainability = {
-    status: false,
-    data: null, 
+    loading: "false",
+    initLoading: false,
+    explInitialization: null, 
     error: null,
-    pdppipeline: null,
-    pdpmodel: null,
-    alepipeline: null,
-    alemodel: null,
-    pdp2dpipeline: null,
-    counterfactualspipeline: null,
 };
-
-// Create a function to generate async thunk for fetching data
-const createFetchDataThunk = (sliceName: string, xaitype: string): any => {
-    return createAsyncThunk(
-        `${sliceName}/fetchData`,
-        async ({ feature1, method,feature2 }: { feature1: string; method: string; feature2: string; }) => {
-            try {
-                const response = await fetchData(feature1, xaitype, method,feature2);
-                return response.data;
-            } catch (error) {
-                throw new Error('Failed to fetch data');
-            }
-        }
-    );
-};
-
-// Create separate thunks for each slice
-export const fetchDataForCounterfactualsPipelineSlice = createFetchDataThunk('counterfactualspipeline', 'pipeline');
 
 // explainabilitySlice
 export const explainabilitySlice = createSlice({
@@ -51,26 +40,20 @@ export const explainabilitySlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(fetchPdpPipeline.fulfilled, (state, action) => {
-            state.pdppipeline = action.payload;
+        builder.addCase(fetchInitialization.fulfilled, (state, action) => {
+            state.explInitialization = action.payload;
+            state.initLoading = false;
         })
-        .addCase(fetchAlePipeline.fulfilled, (state, action) => {
-            state.alepipeline = action.payload;
+        .addCase(fetchExplanation.fulfilled, (state, action) => {
+            state.explInitialization = handleGetExplanation(state.explInitialization, action.payload);
         })
-        .addCase(fetchPdp2dPipeline.fulfilled, (state, action) => {
-            state.pdp2dpipeline = action.payload;
+        .addMatcher(isPending(fetchInitialization, fetchExplanation), (state) => {
+            state.loading = "true";
+            state.initLoading = true;
         })
-        .addCase(fetchPdpModel.fulfilled, (state, action) => {
-            state.pdpmodel = action.payload;
-        })
-        .addCase(fetchAleModel.fulfilled, (state, action) => {
-            state.alemodel = action.payload;
-        })
-        .addMatcher(isPending(fetchPdpPipeline, fetchAlePipeline, fetchPdp2dPipeline, fetchPdpModel, fetchAleModel), (state) => {
-            state.status = true;
-        })
-        .addMatcher(isRejected(fetchPdpPipeline, fetchAlePipeline, fetchPdp2dPipeline, fetchPdpModel, fetchAleModel), (state) => {
-            state.status = false;
+        .addMatcher(isRejected(fetchInitialization, fetchExplanation), (state) => {
+            state.loading = "false";
+            state.initLoading = false;
             state.error = "Failed to fetch data";
         })
     }
@@ -78,48 +61,19 @@ export const explainabilitySlice = createSlice({
 
 //Thunk Calls for fetching data
 
-const apiPath = 'api/visualization/explainability/i2cat_desktop_features';
+const apiPath = 'api/';
 
-export const fetchDataNew = createAsyncThunk('explainability/data', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
+export const fetchInitialization = createAsyncThunk('explainability/fetch_initialization', async (payload: {modelName: string} ) => {
+    const requestUrl = apiPath + "initialization";
+    //TODO: This should be changed in order to make dynamic calls
+    
+    return axios.post<any>(requestUrl, payload).then((response) => response.data);
 });
 
-export const fetchPdpPipeline = createAsyncThunk('explainability/pdp_pipeline', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
-});
-
-export const fetchAlePipeline = createAsyncThunk('explainability/ale_pipeline', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
-});
-
-export const fetchPdp2dPipeline = createAsyncThunk('explainability/pdp2d_pipeline', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
-});
-
-export const fetchPdpModel = createAsyncThunk('explainability/pdp_model', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
-});
-
-export const fetchAleModel = createAsyncThunk('explainability/ale_model', async (payload: {xaitype: string, method: string, feature1: string, feature2: string} ) => {
-    const { xaitype, method, feature1, feature2 } = payload;
-    const requestUrl = apiPath;
-    const payl = {...defaultValue, explainabilityType: xaitype, explainabilityMethod: method, additionalParams: {feature1, feature2}};
-    return axios.post<any>(requestUrl, payl).then((response) => response.data);
+export const fetchExplanation = createAsyncThunk('explainability/fetch_explanation', 
+async (payload: {explanationType: string, explanationMethod: string, model: string, feature1: string, feature2: string} ) => {
+    const requestUrl = apiPath + "explanation";
+    return axios.post<any>(requestUrl, payload).then((response) => response.data);
 });
 
 

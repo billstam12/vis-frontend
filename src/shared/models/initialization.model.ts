@@ -1,39 +1,39 @@
-import { plotModel } from "./plotmodel.model";
+import {IPlotModel } from "./plotmodel.model";
 
 export interface IInitialization {
-  model: {
-    features_names: string[];
+  featureExplanation: {
+    featureNames: string[];
     plots: {
-      pdp: plotModel | null;
-      pdp2d: plotModel | null;
-      ale: plotModel | null;
+      pdp: IPlotModel | null;
+      pdp2d: IPlotModel | null;
+      ale: IPlotModel | null;
     };
     tables: {
       counterfactuals: {
-        content: plotModel | null;
+        content: IPlotModel | null;
       };
-      influence_functions: {
-        content: plotModel | null;
+      influenceFunctions: {
+        content: IPlotModel | null;
       };
     };
   };
-  pipeline: {
-    hyperparameter_names: string[];
+  hyperparameterExplanation: {
+    hyperparameterNames: string[];
     plots: {
-      pdp: plotModel | null;
-      pdp2d: plotModel | null;
-      ale: plotModel | null;
+      pdp: IPlotModel | null;
+      pdp2d: IPlotModel | null;
+      ale: IPlotModel | null;
     };
     tables: {
       counterfactuals: {
-        content: plotModel | null;
+        content: IPlotModel | null;
       };
     };
   };
 }
 
 export interface InitializationRequest {
-    model_name: string;
+    modelName: string;
 }
 
 export interface Features {
@@ -42,7 +42,7 @@ export interface Features {
 }
 
 export interface Axis {
-  axis_name: string;
-  axis_values: number[];
-  axis_type: string;
+  axisName: string;
+  axisValues: number[];
+  axisType: string;
 }

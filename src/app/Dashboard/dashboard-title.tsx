@@ -5,6 +5,7 @@ import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
 import grey from "@mui/material/colors/grey"
 import { Dispatch, SetStateAction, useState } from "react"
+import { useAppSelector } from "../../store/store"
 
 interface IDashboardTitle {
   value: number
@@ -12,6 +13,7 @@ interface IDashboardTitle {
 }
 
 const DashboardTitle = (props: IDashboardTitle) => {
+  const {explInitialization} = useAppSelector(state => state.explainability)
   const {value, setValue} = props;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -33,8 +35,9 @@ const DashboardTitle = (props: IDashboardTitle) => {
         value={value}
         onChange={handleChange}
       >
-        <Tab label="Feature Explanation" sx={{textTransform: "none"}} disableRipple />
-        <Tab label="Hyperparameters Explanation" sx={{textTransform: "none"}} disableRipple />
+        {explInitialization && Object.keys(explInitialization).map((key, index) => (
+          <Tab key={`${key}-tab`} label={key === "featureExplanation" ? "Feature Explanation" : "Hyperparameter Explanation"} sx={{textTransform: "none"}} disableRipple />
+        ))}
       </Tabs>
     </Grid>
   )

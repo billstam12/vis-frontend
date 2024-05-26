@@ -1,15 +1,15 @@
 import { Axis, Features } from "./initialization.model";
 
-export interface plotModel {
-    explainability_type: string;
-    explanation_method: string;
-    explainability_model: string;
-    plot_name: string;
-    plot_descr: string;
-    plot_type: string;
+export interface IPlotModel {
+    explainabilityType: "featureExplanation" | "hyperparameterExplanation";
+    explanationMethod: "ale" | "pdp" | "2dpdp" | "counterfactuals" | "influenceFunctions";
+    explainabilityModel: string;
+    plotName: string;
+    plotDescr: string;
+    plotType: string;
     features: Features;
     xAxis: Axis;
     yAxis: Axis;
     zAxis: Axis;
-    table_contents: Map<string, string[]>;
+    tableContents: Map<string, string[]>;
   }
