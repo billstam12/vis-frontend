@@ -27,10 +27,6 @@ const DashboardTitle = (props: IDashboardTitle) => {
       xs={12}
       sx={{ px: 2, bgcolor: grey[300], display: "flex", height: "3.5rem" }}
     >
-      {/* <Typography fontSize={"2rem"} sx={{ py: 1 }}>
-        Experiment 1
-      </Typography>
-      <Box sx={{ flex: 1 }} /> */}
       <Tabs
         value={value}
         onChange={handleChange}

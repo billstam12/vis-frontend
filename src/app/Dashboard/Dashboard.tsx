@@ -4,11 +4,11 @@ import { fetchInitialization } from "../../store/slices/explainabilitySlice"
 import Grid from "@mui/material/Grid"
 import grey from "@mui/material/colors/grey"
 import DashboardTitle from "./dashboard-title"
-import DashboardItems from "./dashboard-items"
 import CircularProgress from "@mui/material/CircularProgress"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import FeatureExplainability from "../FeatureExpl/feature-explainability"
+import HyperparameterExplainability from "../HyperparamExpl/hyperparameter-explainability"
 
 const Dashboard = () => {
   const { explInitialization, initLoading } = useAppSelector(
@@ -29,10 +29,8 @@ const Dashboard = () => {
         sx={{
           maxWidth: "100vw",
           minHeight: "100vh",
-          // bgcolor: grey[50],
           flexDirection: "column",
           display: "flex",
-          rowGap: 10,
           justifyContent: initLoading ? "center" : "start",
           textAlign: initLoading ? "center" : "start",
         }}
@@ -40,12 +38,12 @@ const Dashboard = () => {
         {initLoading && explInitialization === null ? (
           <Box sx={{ height: "100%", width: "100%" }}>
             <CircularProgress size={"10rem"}/>
-            <Typography fontSize={"1.5rem"} color={grey[500]}>Initializing page please stand by...</Typography>
+            <Typography fontSize={"1.5rem"} color={grey[500]}>Initializing page...</Typography>
           </Box>
         ) : (
           <>
             <DashboardTitle value={value} setValue={setValue} />
-            {value === 0 ? <FeatureExplainability /> : <DashboardItems />}
+            {value === 0 ? <FeatureExplainability /> : <HyperparameterExplainability />}
           </>
         )}
       </Grid>

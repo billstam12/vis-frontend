@@ -11,5 +11,13 @@ export interface IPlotModel {
     xAxis: Axis;
     yAxis: Axis;
     zAxis: Axis;
-    tableContents: Map<string, string[]>;
+    tableContents: ITableContents;
+  }
+
+  interface ITableContents {
+    [key: string]: IValues
+  }
+
+  interface IValues {
+    values: string[];
   }

@@ -3,13 +3,15 @@ import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import { VegaLite } from "react-vega"
+import { VegaLite, Vega } from "react-vega"
 import InfoIcon from "@mui/icons-material/Info"
 import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
-import { SetStateAction, useState } from "react"
+import { SetStateAction, useEffect, useState } from "react"
 import FormControl from "@mui/material/FormControl"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
+import { useAppDispatch } from "../../../store/store"
+import { fetchExplanation } from "../../../store/slices/explainabilitySlice"
 
 interface ILineplot {
   width: string
@@ -17,20 +19,45 @@ interface ILineplot {
   options: string[]
 }
 
+const getVegaliteData = (plmodel: IPlotModel | null) => {
+  if (!plmodel) return []
+  const data: { [x: string]: string }[] = []
+  plmodel.xAxis.axisValues.forEach((val, idx) => {
+    data.push({
+      [plmodel.xAxis.axisName]: val,
+      [plmodel.yAxis.axisName]: plmodel.yAxis.axisValues[idx],
+    })
+  })
+  return data
+}
+
 const LinePlot = (props: ILineplot) => {
   const { width, plotModel, options } = props
-  const [selectedFeature, setSelectedFeature] = useState<string>("Feature 1")
-  const featureList = ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
+  const dispatch = useAppDispatch()
+  const [selectedFeature, setSelectedFeature] = useState<string>("")
 
-  const handleFeatureSelection = (e: {
-    target: { value: SetStateAction<string> }
-  }) => {
-    setSelectedFeature(e.target.value)
-  }
+  useEffect(() => {
+    if (options.length > 0) {
+      setSelectedFeature(options[0])
+    }
+  }, [])
+
+  const handleFeatureSelection =
+    (plmodel: IPlotModel | null) =>
+    (e: { target: { value: string } }) => {
+      dispatch(
+        fetchExplanation({
+          explanationType: plmodel?.explainabilityType || "",
+          explanationMethod: plmodel?.explanationMethod || "",
+          model: plmodel?.explainabilityModel || "",
+          feature1: e.target.value || "",
+          feature2: plmodel?.features.feature2 || "",
+        }),
+      )
+      setSelectedFeature(e.target.value)
+    }
 
   return (
-    <>
-    {console.log("options", options)}
     <Paper
       className="Category-Item"
       elevation={2}
@@ -62,11 +89,9 @@ const LinePlot = (props: ILineplot) => {
         </Typography>
         <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
-            labelId="demo-select-small-label"
-            id="demo-select-small"
             value={selectedFeature}
             sx={{ fontSize: "0.8rem" }}
-            onChange={handleFeatureSelection}
+            onChange={handleFeatureSelection(plotModel)}
             MenuProps={{
               PaperProps: {
                 style: {
@@ -77,7 +102,12 @@ const LinePlot = (props: ILineplot) => {
             }}
           >
             {options.map(feature => (
-              <MenuItem key={`${plotModel?.plotName}-${feature}`} value={feature}>{feature}</MenuItem>
+              <MenuItem
+                key={`${plotModel?.plotName}-${feature}`}
+                value={feature}
+              >
+                {feature}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -90,28 +120,23 @@ const LinePlot = (props: ILineplot) => {
             width: "container",
             autosize: { type: "fit", contains: "padding", resize: true },
             data: {
-              values: [
-                { a: "A", b: 28 },
-                { a: "B", b: 55 },
-                { a: "C", b: 43 },
-                { a: "D", b: 91 },
-                { a: "E", b: 81 },
-                { a: "F", b: 53 },
-                { a: "G", b: 19 },
-                { a: "H", b: 87 },
-                { a: "I", b: 52 },
-              ],
+              values: getVegaliteData(plotModel),
             },
             mark: { type: "line", tooltip: true, point: { size: 100 } },
             encoding: {
-              x: { field: "a", type: "nominal" },
-              y: { field: "b", type: "quantitative" },
+              x: {
+                field: plotModel?.xAxis.axisName || "xAxis default",
+                type: "quantitative",
+              },
+              y: {
+                field: plotModel?.yAxis.axisName || "yAxis default",
+                type: "quantitative",
+              },
             },
           }}
         />
       </Box>
     </Paper>
-    </>
   )
 }
 

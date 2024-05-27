@@ -10,25 +10,16 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
+import { IPlotModel } from "../../../shared/models/plotmodel.model"
 
 interface ITableComponent {
   width: string
+  plotModel: IPlotModel | null
 }
 
 const TableComponent = (props: ITableComponent) => {
-  const { width } = props
+  const { width, plotModel } = props
 
-  function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-    return { name, calories, fat, carbs, protein }
-  }
-
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ]
 
   return (
     <Paper
@@ -41,46 +32,51 @@ const TableComponent = (props: ITableComponent) => {
         flexDirection: "column",
         rowGap: 0,
         minWidth: "300px",
+        overflow: "hidden"
       }}
     >
       <Box sx={{ px: 1.5, pt: 1.5, display: "flex", alignItems: "center" }}>
         <Typography fontSize={"1rem"} fontWeight={600}>
-          Plot name
+          {plotModel?.plotName || "Plot name"}
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Tooltip title="This is going to contain the description of the plot that its been visualized">
+        <Tooltip title={plotModel?.plotDescr || "This is a description"}>
           <IconButton>
             <InfoIcon />
           </IconButton>
         </Tooltip>
       </Box>
-      <Box sx={{ width: "99%", px: 1 }}>
-        <TableContainer component={Box}>
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <TableContainer component={Box} sx={{width: "99%"}}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align="right">Calories</TableCell>
-                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                {Object.keys(plotModel?.tableContents || {}).map(
+                  (key, index) => (
+                    <TableCell key={`table-header-${key}-${index}`}>
+                      {key}
+                    </TableCell>
+                  ),
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                </TableRow>
-              ))}
+              {plotModel?.tableContents[Object.keys(plotModel.tableContents)[0]].values.map(
+                (value, index) => {
+
+                  return (
+                    <TableRow key={`table-row-${index}`}>
+                      {Object.keys(plotModel?.tableContents || {}).map(
+                        (key, idx) => (
+                          <TableCell key={`table-cell-${key}-${index}`}>
+                            {plotModel?.tableContents[Object.keys(plotModel.tableContents)[idx]].values[index]}
+                          </TableCell>
+                        ),
+                      )}
+                    </TableRow>
+                  )
+                },
+              )}
             </TableBody>
           </Table>
         </TableContainer>

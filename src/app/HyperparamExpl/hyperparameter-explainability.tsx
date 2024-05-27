@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store"
 import LinePlot from "../DashboardItems/Plots/line-plot"
 import TableComponent from "../DashboardItems/Tables/table"
 
-const FeatureExplainability = () => {
+const HyperparameterExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
   const dispatch = useAppDispatch()
 
@@ -21,30 +21,30 @@ const FeatureExplainability = () => {
           }}
         >
           <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}>
-            {Object.keys(explInitialization.featureExplanation.plots).map(
+            {Object.keys(explInitialization.hyperparameterExplanation.plots).map(
               (plotKey, index) => (
                 <LinePlot
                   key={`${plotKey}-plot`}
                   plotModel={
-                    explInitialization.featureExplanation.plots[
-                      plotKey as keyof typeof explInitialization.featureExplanation.plots
+                    explInitialization.hyperparameterExplanation.plots[
+                      plotKey as keyof typeof explInitialization.hyperparameterExplanation.plots
                     ] || null
                   }
-                  options={explInitialization.featureExplanation.featureNames}
+                  options={explInitialization.hyperparameterExplanation.hyperparameterNames}
                   width={"48%"}
                 />
               ),
             )}
           </Box>
           <Box>
-            {Object.keys(explInitialization.featureExplanation.tables).map(
+            {Object.keys(explInitialization.hyperparameterExplanation.tables).map(
               (plotKey, index) => (
                 <TableComponent
                   key={`${plotKey}-table`}
                   width={"100%"}
                   plotModel={
-                    explInitialization.featureExplanation.tables[
-                      plotKey as keyof typeof explInitialization.featureExplanation.tables
+                    explInitialization.hyperparameterExplanation.tables[
+                      plotKey as keyof typeof explInitialization.hyperparameterExplanation.tables
                     ] || null
                   }
                 />
@@ -56,4 +56,4 @@ const FeatureExplainability = () => {
     </>
   )
 }
-export default FeatureExplainability
+export default HyperparameterExplainability

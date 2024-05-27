@@ -3,22 +3,31 @@ import axios from "axios";
 import { IInitialization } from "../../shared/models/initialization.model";
 import { IPlotModel } from "../../shared/models/plotmodel.model";
 
-const handleGetExplanation = (initializationState: IInitialization | null, plotMod: IPlotModel) => {
-    if (initializationState) {
-      const newState: IInitialization = {
-        ...initializationState,
-        [plotMod.explainabilityType as keyof IInitialization]: {
-          ...initializationState[plotMod.explainabilityType as keyof IInitialization],
-          [plotMod.tableContents !== null ? "tables" : "plots"]: {
-            [plotMod.explanationMethod]: plotMod,
-          },
+const handleGetExplanation = (
+  initializationState: IInitialization | null,
+  plotMod: IPlotModel,
+) => {
+  console.log(plotMod)
+  if (initializationState) {
+    const newState: IInitialization = {
+      ...initializationState,
+      [plotMod.explainabilityType as keyof IInitialization]: {
+        ...initializationState[
+          plotMod.explainabilityType as keyof IInitialization
+        ],
+        [plotMod.tableContents !== null ? "tables" : "plots"]: {
+          ...initializationState[
+            plotMod.explainabilityType as keyof IInitialization
+          ][plotMod.tableContents !== null ? "tables" : "plots"],
+          [plotMod.explanationMethod]: plotMod,
         },
-      }
-      return newState
-    } else {
-      return null
+      },
     }
+    return newState
+  } else {
+    return null
   }
+}
 
 interface IExplainability {  
     loading: string;
@@ -46,13 +55,18 @@ export const explainabilitySlice = createSlice({
         })
         .addCase(fetchExplanation.fulfilled, (state, action) => {
             state.explInitialization = handleGetExplanation(state.explInitialization, action.payload);
+            state.loading = "false"
         })
-        .addMatcher(isPending(fetchInitialization, fetchExplanation), (state) => {
-            state.loading = "true";
+        .addCase(fetchExplanation.pending, (state) => {
+          state.loading = "true";
+        })
+        .addCase(fetchExplanation.rejected, (state) => {
+            state.loading = "false";
+        })
+        .addMatcher(isPending(fetchInitialization), (state) => {
             state.initLoading = true;
         })
-        .addMatcher(isRejected(fetchInitialization, fetchExplanation), (state) => {
-            state.loading = "false";
+        .addMatcher(isRejected(fetchInitialization), (state) => {
             state.initLoading = false;
             state.error = "Failed to fetch data";
         })
@@ -72,7 +86,7 @@ export const fetchInitialization = createAsyncThunk('explainability/fetch_initia
 
 export const fetchExplanation = createAsyncThunk('explainability/fetch_explanation', 
 async (payload: {explanationType: string, explanationMethod: string, model: string, feature1: string, feature2: string} ) => {
-    const requestUrl = apiPath + "explanation";
+    const requestUrl = apiPath + "explainability";
     return axios.post<any>(requestUrl, payload).then((response) => response.data);
 });
 

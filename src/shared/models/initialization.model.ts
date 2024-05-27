@@ -9,12 +9,8 @@ export interface IInitialization {
       ale: IPlotModel | null;
     };
     tables: {
-      counterfactuals: {
-        content: IPlotModel | null;
-      };
-      influenceFunctions: {
-        content: IPlotModel | null;
-      };
+      counterfactuals: IPlotModel | null;
+      influenceFunctions: IPlotModel | null;
     };
   };
   hyperparameterExplanation: {
@@ -25,9 +21,7 @@ export interface IInitialization {
       ale: IPlotModel | null;
     };
     tables: {
-      counterfactuals: {
-        content: IPlotModel | null;
-      };
+      counterfactuals: IPlotModel | null;
     };
   };
 }
@@ -43,6 +37,6 @@ export interface Features {
 
 export interface Axis {
   axisName: string;
-  axisValues: number[];
+  axisValues: string[];
   axisType: string;
 }
