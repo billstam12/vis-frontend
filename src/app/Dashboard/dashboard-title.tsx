@@ -7,7 +7,10 @@ import grey from "@mui/material/colors/grey"
 import { Dispatch, SetStateAction, useState } from "react"
 import { useAppSelector } from "../../store/store"
 
+
+
 interface IDashboardTitle {
+  
   value: number
   setValue: Dispatch<SetStateAction<number>>;
 }
