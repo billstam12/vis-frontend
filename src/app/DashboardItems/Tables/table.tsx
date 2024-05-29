@@ -8,9 +8,30 @@ import TableContainer from "@mui/material/TableContainer"
 import Table from "@mui/material/Table"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
-import TableCell from "@mui/material/TableCell"
+import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
+import { styled } from "@mui/styles"
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
 interface ITableComponent {
   width: string
@@ -47,15 +68,15 @@ const TableComponent = (props: ITableComponent) => {
         </Tooltip>
       </Box>
       <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-        <TableContainer component={Box} sx={{width: "99%"}}>
+        <TableContainer component={Paper} sx={{width: "99%"}}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 {Object.keys(plotModel?.tableContents || {}).map(
                   (key, index) => (
-                    <TableCell key={`table-header-${key}-${index}`}>
+                    <StyledTableCell key={`table-header-${key}-${index}`}>
                       {key}
-                    </TableCell>
+                    </StyledTableCell>
                   ),
                 )}
               </TableRow>
@@ -65,15 +86,15 @@ const TableComponent = (props: ITableComponent) => {
                 (value, index) => {
 
                   return (
-                    <TableRow key={`table-row-${index}`}>
+                    <StyledTableRow key={`table-row-${index}`}>
                       {Object.keys(plotModel?.tableContents || {}).map(
                         (key, idx) => (
-                          <TableCell key={`table-cell-${key}-${index}`}>
+                          <StyledTableCell key={`table-cell-${key}-${index}`}>
                             {plotModel?.tableContents[Object.keys(plotModel.tableContents)[idx]].values[index]}
-                          </TableCell>
+                          </StyledTableCell>
                         ),
                       )}
-                    </TableRow>
+                    </StyledTableRow>
                   )
                 },
               )}

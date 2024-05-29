@@ -12,6 +12,7 @@ import FormControl from "@mui/material/FormControl"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { useAppDispatch } from "../../../store/store"
 import { fetchExplanation } from "../../../store/slices/explainabilitySlice"
+import { useTheme } from "@emotion/react"
 
 interface ILineplot {
   width: string
@@ -34,7 +35,9 @@ const getVegaliteData = (plmodel: IPlotModel | null) => {
 const LinePlot = (props: ILineplot) => {
   const { width, plotModel, options } = props
   const dispatch = useAppDispatch()
+  const theme = useTheme();
   const [selectedFeature, setSelectedFeature] = useState<string>("")
+  const [aggregateData, setAggregateData] = useState<boolean>(false)
 
   useEffect(() => {
     if (options.length > 0) {
@@ -122,15 +125,17 @@ const LinePlot = (props: ILineplot) => {
             data: {
               values: getVegaliteData(plotModel),
             },
-            mark: { type: "line", tooltip: true, point: { size: 100 } },
+            mark: { type: "line", tooltip: true, point: { size: 100, color: theme.palette.primary.main } },
             encoding: {
               x: {
                 field: plotModel?.xAxis.axisName || "xAxis default",
-                type: "quantitative",
+                type: plotModel?.xAxis.axisType === "numerical" ? "quantitative" : "ordinal",
+                // aggregate: "mean"
               },
               y: {
                 field: plotModel?.yAxis.axisName || "yAxis default",
-                type: "quantitative",
+                type: plotModel?.xAxis.axisType === "numerical" ? "quantitative" : "ordinal",
+                
               },
             },
           }}

@@ -9,6 +9,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import FeatureExplainability from "../FeatureExpl/feature-explainability"
 import HyperparameterExplainability from "../HyperparamExpl/hyperparameter-explainability"
+import DataExploration from "../DataExploration/data-exploration"
 
 const Dashboard = () => {
   const { explInitialization, initLoading } = useAppSelector(
@@ -24,7 +25,6 @@ const Dashboard = () => {
 
   return (
     <>
-      {console.log(explInitialization)}
       <Grid
         sx={{
           maxWidth: "100vw",
@@ -43,7 +43,9 @@ const Dashboard = () => {
         ) : (
           <>
             <DashboardTitle value={value} setValue={setValue} />
-            {value === 0 ? <FeatureExplainability /> : <HyperparameterExplainability />}
+            {value=== 0 && <DataExploration />}
+            {value === 1 && <FeatureExplainability /> }
+            {value === 2 && <HyperparameterExplainability />}
           </>
         )}
       </Grid>

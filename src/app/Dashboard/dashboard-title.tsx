@@ -31,6 +31,7 @@ const DashboardTitle = (props: IDashboardTitle) => {
         value={value}
         onChange={handleChange}
       >
+        <Tab key={`data-exploration-tab`} label={"Data Exploration"} sx={{textTransform: "none"}} disableRipple />
         {explInitialization && Object.keys(explInitialization).map((key, index) => (
           <Tab key={`${key}-tab`} label={key === "featureExplanation" ? "Feature Explanation" : "Hyperparameter Explanation"} sx={{textTransform: "none"}} disableRipple />
         ))}
