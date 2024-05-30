@@ -12,6 +12,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { styled } from "@mui/styles"
+import { useTheme } from "@emotion/react"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,6 +44,8 @@ const TableComponent = (props: ITableComponent) => {
 
 
   return (
+    <>
+    {console.log(plotModel?.tableContents)}
     <Paper
       className="Category-Item"
       elevation={2}
@@ -103,6 +106,7 @@ const TableComponent = (props: ITableComponent) => {
         </TableContainer>
       </Box>
     </Paper>
+    </>
   )
 }
 export default TableComponent

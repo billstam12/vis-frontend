@@ -24,21 +24,14 @@ const getVegaliteData = (plmodel: IPlotModel | null) => {
   const data: { [x: string]: string }[] = []
   plmodel.xAxis.axisValues.map((xval, idx) => {
     plmodel.yAxis.axisValues.map((yVal, yIdx) => {
-      data.push({
-        [plmodel.xAxis.axisName]: xval,
-        [plmodel.yAxis.axisName]: yVal,
-        [plmodel.zAxis.axisName === null ? "Values" : plmodel.zAxis.axisName]:
+        data.push({
+        [plmodel.xAxis.axisName]: parseFloat(xval),
+        [plmodel.yAxis.axisName]: parseFloat(yVal),
+        [plmodel.zAxis.axisName === null ? "value" : plmodel.zAxis.axisName]:
           JSON.parse(plmodel.zAxis.axisValues[idx])[yIdx],
       })
     })
   })
-  //   plmodel.xAxis.axisValues.forEach((val, idx) => {
-  //     data.push({
-  //       [plmodel.xAxis.axisName]: val,
-  //       [plmodel.yAxis.axisName]: plmodel.yAxis.axisValues[idx],
-  //       [plmodel.zAxis.axisName === "null" ? "Values" : plmodel.zAxis.axisName]: JSON.parse(plmodel.zAxis.axisValues[idx])
-  //     })
-  //   })
   console.log(data)
   return data
 }
@@ -103,7 +96,7 @@ const ContourPlot = (props: ILineplot) => {
         <Typography fontSize={"0.8rem"}>
           {plotModel?.explainabilityType === "featureExplanation"
             ? "Select Feature:"
-            : "Select Hyperparameter"}
+            : "Select Hyperparameter 1"}
         </Typography>
         <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
@@ -136,7 +129,7 @@ const ContourPlot = (props: ILineplot) => {
         <Typography fontSize={"0.8rem"}>
           {plotModel?.explainabilityType === "featureExplanation"
             ? "Select Feature:"
-            : "Select Hyperparameter"}
+            : "Select Hyperparameter 2"}
         </Typography>
         <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
@@ -171,7 +164,7 @@ const ContourPlot = (props: ILineplot) => {
           style={{ width: "90%" }}
           spec={{
             width: "container",
-            autosize: { type: "fit", contains: "padding", resize: true },
+            // autosize: { type: "fit", contains: "padding", resize: true },
             data: {
               values: getVegaliteData(plotModel),
             },
@@ -188,7 +181,7 @@ const ContourPlot = (props: ILineplot) => {
               color: {
                 field:
                   plotModel?.zAxis.axisName === null
-                    ? "Values"
+                    ? "value"
                     : plotModel?.zAxis.axisName,
                 type: "quantitative",
                 // aggregate: "mean",
