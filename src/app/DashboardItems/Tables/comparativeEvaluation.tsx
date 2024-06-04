@@ -10,18 +10,16 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
-import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { styled } from "@mui/styles"
 import { useState } from "react"
 import FormControl from "@mui/material/FormControl"
 import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
-import ToggleButton from "@mui/material/ToggleButton"
 import Button from "@mui/material/Button"
 import grey from "@mui/material/colors/grey"
 import { dummyData } from "../../../shared/data/metrics-dummy"
 import { VegaLite } from "react-vega"
+import SaveIcon from "@mui/icons-material/Save"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,7 +49,7 @@ interface ITableComponent {
 const ComparativeEvaluation = (props: ITableComponent) => {
   const { width } = props
   const [selectedOption, setSelectedOption] = useState<string>("Accuracy")
-  const [viewOption, setViewOption] = useState("table")
+  const [viewOption, setViewOption] = useState("parallel coordinates")
 
   const handleOption = (e: { target: { value: string } }) => {
     setSelectedOption(e.target.value)
@@ -101,7 +99,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
         </Box>
         <Box
           sx={{
-            px: 1.5,
+            px: 3,
             pt: 1.5,
             display: "flex",
             alignItems: "center",
@@ -110,7 +108,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography fontSize={"0.8rem"}>Color by</Typography>
+            <Typography fontSize={"0.8rem"}>Color by:</Typography>
             <FormControl
               sx={{ m: 1, minWidth: 120, maxHeight: 120 }}
               size="small"
@@ -140,23 +138,10 @@ const ComparativeEvaluation = (props: ITableComponent) => {
               px: "0.8rem",
               display: "flex",
               columnGap: 2,
-              bgcolor: grey[200],
+              bgcolor: grey[300],
               borderRadius: 10,
             }}
           >
-            <Button
-              variant="text"
-              sx={{
-                borderRadius: 10,
-                color: "black",
-                bgcolor: viewOption === "table" ? "white" : "transparent",
-              }}
-              disableRipple
-              size="small"
-              onClick={handleChange("table")}
-            >
-              Table
-            </Button>
             <Button
               variant="text"
               sx={{
@@ -166,6 +151,9 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                   viewOption === "parallel coordinates"
                     ? "white"
                     : "transparent",
+                fontSize: "0.7rem",
+                textTransform: "none",
+                ":hover": { bgcolor: grey[400] },
               }}
               disableRipple
               size="small"
@@ -173,17 +161,48 @@ const ComparativeEvaluation = (props: ITableComponent) => {
             >
               Parallel Coordinates
             </Button>
+            <Button
+              variant="text"
+              sx={{
+                borderRadius: 10,
+                color: "black",
+                bgcolor: viewOption === "table" ? "white" : "transparent",
+                fontSize: "0.7rem",
+                textTransform: "none",
+                ":hover": { bgcolor: grey[400] },
+              }}
+              disableRipple
+              size="small"
+              onClick={handleChange("table")}
+            >
+              Table
+            </Button>
           </Box>
           <Box>
-            <Button variant="contained">Save Selected Configuration</Button>
+            <Tooltip title={"Save Selected Configuration"}>
+              <IconButton
+                sx={{
+                  bgcolor: "primary.main",
+                  "&:hover": { bgcolor: "primary.main", color: "white" },
+                }}
+              >
+                <SaveIcon sx={{ color: "white" }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", pb: 1 }}>
           {viewOption === "table" && (
-            <TableContainer component={Box} sx={{ width: "99%" }}>
+            <TableContainer component={Box} sx={{ width: "99%", border: `1px solid ${grey[400]}` }}>
               <Table
                 stickyHeader
-                sx={{ minWidth: 650 }}
+                sx={{
+                  minWidth: 650,
+                  "& .MuiTableRow-root:hover": {
+                    backgroundColor: "primary.light",
+                    cursor: "pointer",
+                  },
+                }}
                 size="small"
                 aria-label="simple table"
               >
@@ -198,7 +217,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                 </TableHead>
                 <TableBody>
                   {dummyData.map((row, index) => (
-                    <StyledTableRow hover key={`table-row-${index}`}>
+                    <StyledTableRow key={`table-row-${index}`}>
                       {Object.values(row).map((value, idx) => (
                         <StyledTableCell key={`table-cell-${value}-${index}`}>
                           {value}
@@ -229,7 +248,6 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                       "max_depth",
                       "min_child_weight",
                       "learning_rate",
-                      "n_estimators",
                       "Precision",
                       "Recall",
                       "Accuracy",
@@ -264,13 +282,17 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                   {
                     mark: "line",
                     encoding: {
-                      color: { type: "nominal", field: "species" },
+                      color: {
+                        type: "nominal",
+                        field: selectedOption,
+                        legend: null,
+                      },
                       detail: { type: "nominal", field: "index" },
                       opacity: { value: 0.3 },
                       x: { type: "nominal", field: "key" },
                       y: {
                         type: "quantitative",
-                        field: "norm_val",
+                        field: "value",
                         axis: null,
                       },
                       tooltip: [

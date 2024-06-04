@@ -33,7 +33,6 @@ const FeatureExplainability = () => {
                     ] || null
                   }
                   options={explInitialization.featureExplanation.featureNames}
-                  width={"48%"}
                 />
               ),
             )}

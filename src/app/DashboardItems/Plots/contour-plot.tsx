@@ -12,35 +12,35 @@ import FormControl from "@mui/material/FormControl"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { useAppDispatch } from "../../../store/store"
 import { fetchExplanation } from "../../../store/slices/explainabilitySlice"
+import grey from "@mui/material/colors/grey"
 
 interface ILineplot {
-  width: string
   plotModel: IPlotModel | null
   options: string[]
 }
 
-const getVegaliteData = (plmodel: IPlotModel | null) => {
-  if (!plmodel) return []
-  const data: { [x: string]: string }[] = []
-  plmodel.xAxis.axisValues.map((xval, idx) => {
-    plmodel.yAxis.axisValues.map((yVal, yIdx) => {
-        data.push({
-        [plmodel.xAxis.axisName]: parseFloat(xval),
-        [plmodel.yAxis.axisName]: parseFloat(yVal),
-        [plmodel.zAxis.axisName === null ? "value" : plmodel.zAxis.axisName]:
-          JSON.parse(plmodel.zAxis.axisValues[idx])[yIdx],
-      })
-    })
-  })
-  console.log(data)
-  return data
-}
-
 const ContourPlot = (props: ILineplot) => {
-  const { width, plotModel, options } = props
+  const { plotModel, options } = props
   const dispatch = useAppDispatch()
   const [selectedFeature1, setSelectedFeature1] = useState<string>("")
   const [selectedFeature2, setSelectedFeature2] = useState<string>("")
+  const [vegaData, setVegaData] = useState<{ [x: string]: string }[]>([])
+
+  const getVegaliteData = (plmodel: IPlotModel | null) => {
+    if (!plmodel) return []
+    const data: { [x: string]: string }[] = []
+    plmodel.xAxis.axisValues.map((xval, idx) => {
+      plmodel.yAxis.axisValues.map((yVal, yIdx) => {
+        data.push({
+          [plmodel.xAxis.axisName]: parseFloat(xval),
+          [plmodel.yAxis.axisName]: parseFloat(yVal),
+          [plmodel.zAxis.axisName === null ? "value" : plmodel.zAxis.axisName]:
+            JSON.parse(plmodel.zAxis.axisValues[idx])[yIdx],
+        })
+      })
+    })
+    setVegaData(data)
+  }
 
   useEffect(() => {
     if (options.length > 0) {
@@ -48,6 +48,12 @@ const ContourPlot = (props: ILineplot) => {
       setSelectedFeature2(options[1])
     }
   }, [])
+
+  useEffect(() => {
+    if (plotModel) {
+      getVegaliteData(plotModel)
+    }
+  }, [plotModel])
 
   const handleFeatureSelection =
     (plmodel: IPlotModel | null, featureNumber: number) =>
@@ -74,14 +80,23 @@ const ContourPlot = (props: ILineplot) => {
       elevation={2}
       sx={{
         borderRadius: 4,
-        width: width,
+        width: "inherit",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         rowGap: 0,
         minWidth: "300px",
       }}
     >
-      <Box sx={{ px: 1.5, pt: 1.5, display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          px: 1.5,
+          py: 0.5,
+          display: "flex",
+          alignItems: "center",
+          borderBottom: `1px solid ${grey[400]}`,
+        }}
+      >
         <Typography fontSize={"1rem"} fontWeight={600}>
           {plotModel?.plotName || "Plot name"}
         </Typography>
@@ -92,12 +107,9 @@ const ContourPlot = (props: ILineplot) => {
           </IconButton>
         </Tooltip>
       </Box>
+      <Box sx={{display: "flex", flexWrap: "wrap"}}>
       <Box sx={{ display: "flex", alignItems: "center", px: 1.5 }}>
-        <Typography fontSize={"0.8rem"}>
-          {plotModel?.explainabilityType === "featureExplanation"
-            ? "Select Feature:"
-            : "Select Hyperparameter 1"}
-        </Typography>
+        <Typography fontSize={"0.8rem"}>Hyperparameter 1:</Typography>
         <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
             value={selectedFeature1}
@@ -126,11 +138,7 @@ const ContourPlot = (props: ILineplot) => {
         </FormControl>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", px: 1.5 }}>
-        <Typography fontSize={"0.8rem"}>
-          {plotModel?.explainabilityType === "featureExplanation"
-            ? "Select Feature:"
-            : "Select Hyperparameter 2"}
-        </Typography>
+        <Typography fontSize={"0.8rem"}>Hyperparameter 2:</Typography>
         <FormControl sx={{ m: 1, minWidth: 120, maxHeight: 120 }} size="small">
           <Select
             value={selectedFeature2}
@@ -158,17 +166,19 @@ const ContourPlot = (props: ILineplot) => {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ width: "99%", px: 1 }}>
+      </Box>
+      <Box sx={{ width: "99%", px: 2, flex: 1 }}>
         <Vega
           actions={false}
-          style={{ width: "90%" }}
+          style={{ width: "95%", height: "100%" }}
           spec={{
             width: "container",
-            // autosize: { type: "fit", contains: "padding", resize: true },
+            height: "container",
+            autosize: { type: "fit", contains: "padding", resize: true },
             data: {
-              values: getVegaliteData(plotModel),
+              values: vegaData,
             },
-            mark: { type: "rect", tooltip: true},
+            mark: { type: "rect", tooltip: true },
             encoding: {
               x: {
                 field: plotModel?.xAxis.axisName || "xAxis default",

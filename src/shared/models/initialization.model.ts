@@ -5,7 +5,7 @@ export interface IInitialization {
     featureNames: string[];
     plots: {
       pdp: IPlotModel | null;
-      pdp2d: IPlotModel | null;
+      "2dpdp": IPlotModel | null;
       ale: IPlotModel | null;
     };
     tables: {
@@ -17,7 +17,7 @@ export interface IInitialization {
     hyperparameterNames: string[];
     plots: {
       pdp: IPlotModel | null;
-      pdp2d: IPlotModel | null;
+      "2dpdp": IPlotModel | null;
       ale: IPlotModel | null;
     };
     tables: {

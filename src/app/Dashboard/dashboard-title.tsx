@@ -6,17 +6,20 @@ import Typography from "@mui/material/Typography"
 import grey from "@mui/material/colors/grey"
 import { Dispatch, SetStateAction, useState } from "react"
 import { useAppSelector } from "../../store/store"
+import Button from "@mui/material/Button"
 
 interface IDashboardTitle {
   value: number
-  setValue: Dispatch<SetStateAction<number>>;
+  setValue: Dispatch<SetStateAction<number>>
 }
 
 const DashboardTitle = (props: IDashboardTitle) => {
-  const {explInitialization} = useAppSelector(state => state.explainability)
-  const {value, setValue} = props;
+  const { explInitialization } = useAppSelector(state => state.explainability)
+  const { value, setValue } = props
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (newValue: number) => (event: React.SyntheticEvent) => {
+    console.log(newValue)
+    if (value === newValue) return;
     setValue(newValue)
   }
 
@@ -25,17 +28,67 @@ const DashboardTitle = (props: IDashboardTitle) => {
       className="dashboard-title"
       item
       xs={12}
-      sx={{ px: 2, bgcolor: grey[300], display: "flex", height: "3.5rem" }}
+      sx={{
+        px: 2,
+        py: 1,
+        bgcolor: grey[300],
+        display: "flex",
+        height: "3.5rem",
+        columnGap: 1,
+      }}
     >
-      <Tabs
-        value={value}
-        onChange={handleChange}
+      <Button
+        variant="text"
+        sx={{
+          borderRadius: 10,
+          color: "black",
+          bgcolor: value === 0 ? "white" : "transparent",
+          fontSize: "0.8rem",
+          textTransform: "none",
+          ":hover": { bgcolor: grey[400] },
+        }}
+        size="small"
+        disableRipple
+        onClick={handleChange(0)}
       >
-        <Tab key={`data-exploration-tab`} label={"Data Exploration"} sx={{textTransform: "none"}} disableRipple />
-        {explInitialization && Object.keys(explInitialization).map((key, index) => (
-          <Tab key={`${key}-tab`} label={key === "featureExplanation" ? "Feature Explanation" : "Hyperparameter Explanation"} sx={{textTransform: "none"}} disableRipple />
-        ))}
-      </Tabs>
+        Experiment Variant Analysis
+      </Button>
+      <Button
+        sx={{
+          borderRadius: 10,
+          color: "black",
+          bgcolor: value === 1 ? "white" : "transparent",
+          fontSize: "0.8rem",
+          textTransform: "none",
+          ":hover": { bgcolor: grey[400] },
+        }}
+        size="small"
+        disableRipple
+        onClick={handleChange(1)}
+      >
+        Experiment 71
+      </Button>
+      {/* <Tabs value={value} onChange={handleChange(1)}>
+        <Tab
+          key={`data-exploration-tab`}
+          label={"Data Exploration"}
+          sx={{ textTransform: "none" }}
+          disableRipple
+        />
+        {explInitialization &&
+          Object.keys(explInitialization).map((key, index) => (
+            <Tab
+              key={`${key}-tab`}
+              label={
+                key === "featureExplanation"
+                  ? "Feature Explanation"
+                  : "Hyperparameter Explanation"
+              }
+              sx={{ textTransform: "none" }}
+              disableRipple
+            />
+          ))}
+      </Tabs> */}
     </Grid>
   )
 }

@@ -5,6 +5,7 @@ import TableComponent from "../DashboardItems/Tables/table"
 import ContourPlot from "../DashboardItems/Plots/contour-plot"
 import ParallelCoordinatePlot from "../DashboardItems/Plots/parallel-coordinate-plot"
 import ComparativeEvaluation from "../DashboardItems/Tables/comparativeEvaluation"
+import Grid from "@mui/material/Grid"
 
 const HyperparameterExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
@@ -23,62 +24,52 @@ const HyperparameterExplainability = () => {
             my: "3rem",
           }}
         >
-          <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}>
+          {/* <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}> */}
             <ComparativeEvaluation width={"100%"} />
-            {Object.keys(
-              explInitialization.hyperparameterExplanation.plots,
-            ).map((plotKey, index) => {
-              if (plotKey === "2dpdp") {
-                return (
-                  <ContourPlot
-                    key={`${plotKey}-plot`}
-                    plotModel={
-                      explInitialization.hyperparameterExplanation.plots[
-                        plotKey as keyof typeof explInitialization.hyperparameterExplanation.plots
-                      ] || null
-                    }
-                    options={
-                      explInitialization.hyperparameterExplanation
-                        .hyperparameterNames
-                    }
-                    width={"48%"}
-                  />
-                )
-              } else {
-                return (
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <ContourPlot
+                  key={`2dpdp-plot`}
+                  plotModel={
+                    explInitialization.hyperparameterExplanation.plots["2dpdp"] ||
+                    null
+                  }
+                  options={
+                    explInitialization.hyperparameterExplanation
+                      .hyperparameterNames
+                  }
+                />
+              </Grid>
+              <Grid container item xs={12} md={6} spacing={2}>
+                <Grid item xs={12}>
                   <LinePlot
-                    key={`${plotKey}-plot`}
+                    key={`pdp-plot`}
                     plotModel={
-                      explInitialization.hyperparameterExplanation.plots[
-                        plotKey as keyof typeof explInitialization.hyperparameterExplanation.plots
-                      ] || null
+                      explInitialization.hyperparameterExplanation.plots.pdp ||
+                      null
                     }
                     options={
                       explInitialization.hyperparameterExplanation
                         .hyperparameterNames
                     }
-                    width={"48%"}
                   />
-                )
-              }
-            })}
-          </Box>
-          <Box>
-            {Object.keys(
-              explInitialization.hyperparameterExplanation.tables,
-            ).map((plotKey, index) => (
-              <TableComponent
-                key={`${plotKey}-table`}
-                children={<ParallelCoordinatePlot width={"100%"} />}
-                width={"100%"}
-                plotModel={
-                  explInitialization.hyperparameterExplanation.tables[
-                    plotKey as keyof typeof explInitialization.hyperparameterExplanation.tables
-                  ] || null
-                }
-              />
-            ))}
-          </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <LinePlot
+                    key={`ale-plot`}
+                    plotModel={
+                      explInitialization.hyperparameterExplanation.plots.ale ||
+                      null
+                    }
+                    options={
+                      explInitialization.hyperparameterExplanation
+                        .hyperparameterNames
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            
         </Box>
       ) : null}
     </>

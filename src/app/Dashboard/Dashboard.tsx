@@ -43,9 +43,8 @@ const Dashboard = () => {
         ) : (
           <>
             <DashboardTitle value={value} setValue={setValue} />
-            {value=== 0 && <DataExploration />}
+            {value=== 0 && <HyperparameterExplainability />}
             {value === 1 && <FeatureExplainability /> }
-            {value === 2 && <HyperparameterExplainability />}
           </>
         )}
       </Grid>
