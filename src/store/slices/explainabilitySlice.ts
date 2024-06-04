@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, isFulfilled, isPending, isRejected } fro
 import axios from "axios";
 import { IInitialization } from "../../shared/models/initialization.model";
 import { IPlotModel } from "../../shared/models/plotmodel.model";
+import { IDataExplorationRequest } from "../../shared/models/dataexploration.model";
 
 const handleGetExplanation = (
   initializationState: IInitialization | null,
@@ -34,6 +35,7 @@ interface IExplainability {
     initLoading: boolean;
     explInitialization: IInitialization | null;
     error: string | null;
+    misclassifiedInstances: any[];
 }
 
 const initialState: IExplainability = {
@@ -41,6 +43,7 @@ const initialState: IExplainability = {
     initLoading: false,
     explInitialization: null, 
     error: null,
+    misclassifiedInstances: [],
 };
 
 // explainabilitySlice
@@ -57,16 +60,20 @@ export const explainabilitySlice = createSlice({
             state.explInitialization = handleGetExplanation(state.explInitialization, action.payload);
             state.loading = "false"
         })
+        .addCase(fetchMisclassifiedInstances.fulfilled, (state, action) => {
+            state.misclassifiedInstances = action.payload;
+            state.loading = "false"
+        })
         .addCase(fetchExplanation.pending, (state) => {
           state.loading = "true";
         })
         .addCase(fetchExplanation.rejected, (state) => {
             state.loading = "false";
         })
-        .addMatcher(isPending(fetchInitialization), (state) => {
+        .addMatcher(isPending(fetchInitialization, fetchMisclassifiedInstances), (state) => {
             state.initLoading = true;
         })
-        .addMatcher(isRejected(fetchInitialization), (state) => {
+        .addMatcher(isRejected(fetchInitialization, fetchMisclassifiedInstances), (state) => {
             state.initLoading = false;
             state.error = "Failed to fetch data";
         })
@@ -87,6 +94,22 @@ export const fetchInitialization = createAsyncThunk('explainability/fetch_initia
 export const fetchExplanation = createAsyncThunk('explainability/fetch_explanation', 
 async (payload: {explanationType: string, explanationMethod: string, model: string, feature1: string, feature2: string} ) => {
     const requestUrl = apiPath + "explainability";
+    return axios.post<any>(requestUrl, payload).then((response) => response.data);
+});
+
+export const fetchMisclassifiedInstances = createAsyncThunk('explainability/fetch_misclassified_instances', 
+async () => {
+// TODO: make this dynamic
+// async (payload: IDataExplorationRequest) => {
+    const payload = {
+      datasetId: "file:///home/pgidarakos/OLDIES/CSVSXXP/misclassified_instances.csv",
+      columns: [],
+      aggFunction:"ll",
+      filters: [],
+      scaler: "z",
+      limit: 10
+    }
+    const requestUrl = apiPath + "visualization/data";
     return axios.post<any>(requestUrl, payload).then((response) => response.data);
 });
 

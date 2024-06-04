@@ -12,7 +12,6 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { styled } from "@mui/styles"
-import { useTheme } from "@emotion/react"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,6 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 interface ITableComponent {
   width: string
   plotModel: IPlotModel | null
+  children?: React.ReactNode;
 }
 
 const TableComponent = (props: ITableComponent) => {
@@ -45,7 +45,6 @@ const TableComponent = (props: ITableComponent) => {
 
   return (
     <>
-    {console.log(plotModel?.tableContents)}
     <Paper
       className="Category-Item"
       elevation={2}
@@ -70,9 +69,10 @@ const TableComponent = (props: ITableComponent) => {
           </IconButton>
         </Tooltip>
       </Box>
+      {props.children || null}
       <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
         <TableContainer component={Paper} sx={{width: "99%"}}>
-          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="simple table">
             <TableHead>
               <TableRow>
                 {Object.keys(plotModel?.tableContents || {}).map(
@@ -87,7 +87,6 @@ const TableComponent = (props: ITableComponent) => {
             <TableBody>
               {plotModel?.tableContents[Object.keys(plotModel.tableContents)[0]].values.map(
                 (value, index) => {
-
                   return (
                     <StyledTableRow key={`table-row-${index}`}>
                       {Object.keys(plotModel?.tableContents || {}).map(
