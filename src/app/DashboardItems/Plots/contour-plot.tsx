@@ -20,11 +20,11 @@ interface ILineplot {
 }
 
 const ContourPlot = (props: ILineplot) => {
+  
   const { plotModel, options } = props
   const dispatch = useAppDispatch()
   const [selectedFeature1, setSelectedFeature1] = useState<string>("")
   const [selectedFeature2, setSelectedFeature2] = useState<string>("")
-  const [vegaData, setVegaData] = useState<{ [x: string]: string }[]>([])
 
   const getVegaliteData = (plmodel: IPlotModel | null) => {
     if (!plmodel) return []
@@ -39,7 +39,7 @@ const ContourPlot = (props: ILineplot) => {
         })
       })
     })
-    setVegaData(data)
+    return data;
   }
 
   useEffect(() => {
@@ -48,12 +48,6 @@ const ContourPlot = (props: ILineplot) => {
       setSelectedFeature2(options[1])
     }
   }, [])
-
-  useEffect(() => {
-    if (plotModel) {
-      getVegaliteData(plotModel)
-    }
-  }, [plotModel])
 
   const handleFeatureSelection =
     (plmodel: IPlotModel | null, featureNumber: number) =>
@@ -170,15 +164,15 @@ const ContourPlot = (props: ILineplot) => {
       <Box sx={{ width: "99%", px: 2, flex: 1 }}>
         <Vega
           actions={false}
-          style={{ width: "95%", height: "100%" }}
+          style={{ width: "95%", height: 500 }}
           spec={{
             width: "container",
             height: "container",
             autosize: { type: "fit", contains: "padding", resize: true },
             data: {
-              values: vegaData,
+              values: getVegaliteData(plotModel),
             },
-            mark: { type: "rect", tooltip: true },
+            mark: { type: "rect" },
             encoding: {
               x: {
                 field: plotModel?.xAxis.axisName || "xAxis default",
@@ -194,8 +188,12 @@ const ContourPlot = (props: ILineplot) => {
                     ? "value"
                     : plotModel?.zAxis.axisName,
                 type: "quantitative",
-                // aggregate: "mean",
               },
+              tooltip: [
+                {
+                  field: "value",
+                }
+              ]
             },
             config: {
               axis: { grid: true, tickBand: "extent" },

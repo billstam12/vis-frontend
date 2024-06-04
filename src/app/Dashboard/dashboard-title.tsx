@@ -7,6 +7,7 @@ import grey from "@mui/material/colors/grey"
 import { Dispatch, SetStateAction, useState } from "react"
 import { useAppSelector } from "../../store/store"
 import Button from "@mui/material/Button"
+import StarsIcon from '@mui/icons-material/Stars';
 
 interface IDashboardTitle {
   value: number
@@ -30,22 +31,27 @@ const DashboardTitle = (props: IDashboardTitle) => {
       xs={12}
       sx={{
         px: 2,
-        py: 1,
+        pt: 1,
         bgcolor: grey[300],
         display: "flex",
         height: "3.5rem",
-        columnGap: 1,
+        columnGap: 0,
       }}
     >
       <Button
         variant="text"
         sx={{
-          borderRadius: 10,
+          borderRadius: "20px 20px 0px 0px",
+          px: 2,
           color: "black",
           bgcolor: value === 0 ? "white" : "transparent",
+          border: value !== 0 ? `1px solid ${grey[400]}` : "none",
+          borderBottom: "none",
           fontSize: "0.8rem",
           textTransform: "none",
-          ":hover": { bgcolor: grey[400] },
+          ":hover": { bgcolor: value !== 0 ? grey[400] : "white" },
+          boxShadow: "0 0 -25px 0 #001f3f",
+          zIndex: value === 0 ? 1 : 0
         }}
         size="small"
         disableRipple
@@ -55,17 +61,23 @@ const DashboardTitle = (props: IDashboardTitle) => {
       </Button>
       <Button
         sx={{
-          borderRadius: 10,
+          borderRadius: "20px 20px 0px 0px",
+          px: 2,
           color: "black",
           bgcolor: value === 1 ? "white" : "transparent",
+          border: value !== 1 ? `1px solid ${grey[400]}` : "none",
+          borderBottom: "none",
           fontSize: "0.8rem",
           textTransform: "none",
-          ":hover": { bgcolor: grey[400] },
+          ":hover": { bgcolor: value !== 1 ? grey[400] : "white" },
+          marginLeft: -1,
+          zIndex: value === 1 ? 1 : 0,
         }}
         size="small"
         disableRipple
         onClick={handleChange(1)}
       >
+        <StarsIcon />
         Experiment 71
       </Button>
       {/* <Tabs value={value} onChange={handleChange(1)}>

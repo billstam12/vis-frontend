@@ -21,26 +21,6 @@ import { dummyData } from "../../../shared/data/metrics-dummy"
 import { VegaLite } from "react-vega"
 import SaveIcon from "@mui/icons-material/Save"
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}))
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}))
-
 interface ITableComponent {
   width: string
   children?: React.ReactNode
@@ -217,13 +197,13 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                 </TableHead>
                 <TableBody>
                   {dummyData.map((row, index) => (
-                    <StyledTableRow key={`table-row-${index}`}>
+                    <TableRow key={`table-row-${index}`} sx={{bgcolor: index%2 !== 0 ? "white" : grey[100]}}>
                       {Object.values(row).map((value, idx) => (
-                        <StyledTableCell key={`table-cell-${value}-${index}`}>
+                        <TableCell key={`table-cell-${value}-${index}`}>
                           {value}
-                        </StyledTableCell>
+                        </TableCell>
                       ))}
-                    </StyledTableRow>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
