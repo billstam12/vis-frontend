@@ -11,6 +11,13 @@ const DataExploration: React.FC = () => {
   const { dataExploration, loading, error } = useAppSelector(state => state.dataExploration);
   const dispatch = useAppDispatch();
 
+
+  useEffect(() => {
+    console.log("Data Exploration State: ", dataExploration);
+    console.log("Loading State: ", loading);
+    console.log("Error State: ", error);
+}, [dataExploration, loading, error]);
+
   const [columns, setColumns] = useState<GridColDef[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [granularity, setGranularity] = useState<string>('null');
@@ -51,15 +58,15 @@ const DataExploration: React.FC = () => {
     if (dataExploration) {
       const parsedData = JSON.parse(dataExploration.data);
       setData(parsedData);
-      const columnNames = Object.keys(parsedData[0]);
-      const gridColumns: GridColDef[] = columnNames.map((name) => ({
-        field: name,
-        headerName: name,
-        width: 200,
-      }));
-      setColumns(gridColumns);
+
+      const gridColumns: GridColDef[] = dataExploration.columns.map(col => ({
+            field: col.name,
+            headerName: col.name,
+            width: 200
+        }));
+        setColumns(gridColumns);
     }
-  }, [dataExploration]);
+}, [dataExploration]);
 
   const handleUseCaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUseCase(event.target.value);
@@ -82,33 +89,40 @@ const DataExploration: React.FC = () => {
     fetchData();
   }, [cols,granularity,scaler]);
 
+
+
+  
+
   return (
+
+   
     <Box
-    sx={{
-      px: 5,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      gap: 4,
-      my: "3rem",
-    }}
-  >    
- <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}>
+      sx={{
+        px: 5,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 4,
+        my: "3rem",
+      }}
+      >    
+      <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}>
         <Button variant="contained" onClick={handleMenuClick}>
           Actions
         </Button>
+        
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
-        >
+          >
           <MenuItem>
-            <TextField
-              label="Use Case"
-              value={useCase}
-              onChange={handleUseCaseChange}
-              sx={{ mb: 2 }}
-            />
+          <TextField
+            label="Use Case"
+            value={useCase}
+            onChange={handleUseCaseChange}
+            sx={{ mb: 2 }}
+          />
           </MenuItem>
           <MenuItem>
             <TextField
@@ -119,12 +133,12 @@ const DataExploration: React.FC = () => {
             />
           </MenuItem>
           <MenuItem>
-            <TextField
-              label="Subfolder"
-              value={subfolder}
-              onChange={handleSubfolderChange}
-              sx={{ mb: 2 }}
-            />
+          <TextField
+            label="Subfolder"
+            value={subfolder}
+            onChange={handleSubfolderChange}
+            sx={{ mb: 2 }}
+          />
           </MenuItem>
           <MenuItem>
             <TextField
@@ -139,20 +153,47 @@ const DataExploration: React.FC = () => {
               Fetch Data
             </Button>
           </MenuItem>
+            
         </Menu>
-        {loading === "true" && <CircularProgress />}
+        {loading && <CircularProgress />}
         {error && <Typography color="error">Error: {error}</Typography>}
-        {dataExploration && (
-          <DataTable data={data} columns={columns} setGranularity={setGranularity} setScaler={setScaler} />
+        {data.length>0 && (
+          <>
+            <DataTable data={JSON.parse(dataExploration.data)} columns={dataExploration.columns.map(col => ({
+              field: col.name,
+              headerName: col.name,
+              width: 200
+              }))} setGranularity={setGranularity} setScaler={setScaler} />
+          </>
+
         )}
-      
       </Box>
+      {loading  && <CircularProgress />}
+      {error && <Typography color="error">Error: {error}</Typography>}
+      {data.length>0 && (
+        <>
+          <DataExplorationChart data={JSON.parse(dataExploration.data)} columns={ dataExploration.columns.map(col => ({
+              field: col.name,
+              headerName: col.name,
+              width: 200
+          })).map((column) => column.field)} />
+        </>
+      )}
+
+        
       
-<DataExplorationChart data={data} columns={columns.map((column) => column.field)} />
-     
-    </Box>
+  </Box>
     
   );
 };
 
 export default DataExploration;
+
+
+
+
+
+
+
+
+

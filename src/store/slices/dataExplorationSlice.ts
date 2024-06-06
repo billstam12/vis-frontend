@@ -4,7 +4,7 @@ import axios from "axios";
 import { IFilter, IDataExplorationRequest } from "../../shared/models/dataexploration.model";
 // Define the interface for the slice state
 interface IExploration {  
-    loading: string;
+    loading: boolean;
     initLoading: boolean;
     dataExploration: IDataExplorationRequest | null;
     error: string | null;
@@ -12,7 +12,7 @@ interface IExploration {
 
 // Define the initial state of the slice
 const initialState: IExploration = {
-    loading: "false",
+    loading: false,
     initLoading: false,
     dataExploration: null, 
     error: null,
@@ -40,11 +40,16 @@ export const dataExplorationSlice = createSlice({
         builder
             .addCase(fetchDataExploration.fulfilled, (state, action) => {
                 state.dataExploration = action.payload;
-                state.loading = "false";
+                state.loading = false;
+                state.error = null;  // Clearing error on success
+
                 
             })
             .addCase(fetchDataExploration.pending, (state) => {
-                state.loading = "true";
+                state.loading = true;
+                state.error = null;  // Resetting the error on new request
+
+
               
             })
             .addCase(fetchDataExploration.rejected, (state, action) => {
