@@ -1,10 +1,12 @@
-// components/DataExplorationChart.tsx
-
+import { Box, Typography } from '@mui/material';
 import React from 'react';
-import { VegaLite } from 'react-vega';
-
-const DataExplorationChart: React.FC<{ data: any }> = ({ data }) => {
-    const spec = {
+import { VegaLite, VisualizationSpec } from 'react-vega';
+interface DataExplorationChartProps {
+    data: any;
+    columns: string[];
+}
+const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data,columns }) => {
+    const spec: VisualizationSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "width": "container",
         "height": 400,
@@ -31,15 +33,20 @@ const DataExplorationChart: React.FC<{ data: any }> = ({ data }) => {
         },
         "transform": [
             {
-                "fold": [ "dns_interlog_time_q2", "dns_interlog_time_q3"],
+                "fold": columns.slice(1,4),
                 "as": ["variable", "value"]
             }
         ]
     };
 
-    return <VegaLite spec={spec} />;
+    return( 
+        <>
+            <Typography variant="h6" gutterBottom>
+                Linechart Viewer
+            </Typography>
+            <VegaLite spec={spec} />
+        </>
+    );
 };
 
 export default DataExplorationChart;
-
-

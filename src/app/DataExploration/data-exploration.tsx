@@ -1,47 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../../store/store';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { fetchDataExploration } from '../../store/slices/dataExplorationSlice';
 import DataTable from './DataTable';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Menu, MenuItem, TextField, Typography } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import DataExplorationChart from './DataExplorationChart';
 import { IDataExplorationRequest } from '../../shared/models/dataexploration.model';
+import DataExplorationChart from './DataExplorationChart';
 
 const DataExploration: React.FC = () => {
+  const { dataExploration, loading, error } = useAppSelector(state => state.dataExploration);
   const dispatch = useAppDispatch();
-  const { dataExploration, loading, error } = useSelector((state: RootState) => state.dataExploration);
+
   const [columns, setColumns] = useState<GridColDef[]>([]);
   const [data, setData] = useState<any[]>([]);
+  const [granularity, setGranularity] = useState<string>('null');
+  const [scaler, setScaler] = useState<string>('null');
+  const [useCase, setUseCase] = useState<string>('1');
+  const [folder, setFolder] = useState<string>('input_data');
+  const [subfolder, setSubfolder] = useState<string>('electrical_data');
+  const [filename, setFilename] = useState<string>('test.csv');
+  // const [cols,setCols]=useState<any[]>(["timestamp","dns_interlog_time_q1","dns_interlog_time_q2","dns_interlog_time_q3"])
+  const [cols,setCols]=useState<any[]>([])
 
-  useEffect(() => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const fetchData = () => {
+    const datasetId = `zenoh://${useCase}/${folder}/${subfolder}/${filename}`;
     const requestData = {
-      datasetId: "file:///home/pgidarakos/OLDIES/CSVSXXP/ale_features.csv",
-      columns: ["values"],
-      aggFunction: "l",
-      filters: [
-        // {
-        //   column: "dns_interlog_time_q3",
-        //   type: "range",
-        //   value: {
-        //     min: 0.03597122302158273,
-        //     max: 0.13697122302158273,
-        //   },
-        // },
-      ],
-      limit: 30,
-      scaler: "z",
+      datasetId: datasetId,
+      columns: cols,
+      aggFunction: granularity,
+      filters: [],
+      limit: 1000,
+      scaler: scaler,
     } as IDataExplorationRequest;
     dispatch(fetchDataExploration(requestData));
-  }, []);
+    handleMenuClose();
+  };
 
   useEffect(() => {
     if (dataExploration) {
-      console.log("pamedata",dataExploration);
-      const parsedData = JSON.parse(
-        dataExploration.data);
+      const parsedData = JSON.parse(dataExploration.data);
       setData(parsedData);
-      
       const columnNames = Object.keys(parsedData[0]);
       const gridColumns: GridColDef[] = columnNames.map((name) => ({
         field: name,
@@ -52,19 +61,97 @@ const DataExploration: React.FC = () => {
     }
   }, [dataExploration]);
 
-  return (
-    <Box>
-    <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>
-        Data Exploration
-      </Typography>
-      {loading === "true" && <CircularProgress />}
-      {error && <Typography color="error">Error: {error}</Typography>}
-    {dataExploration && <DataTable data={data} columns={columns} />}
+  const handleUseCaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUseCase(event.target.value);
+  };
 
+  const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFolder(event.target.value);
+  };
+
+  const handleSubfolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSubfolder(event.target.value);
+  };
+
+
+  const handleFilenameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilename(event.target.value);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [cols,granularity,scaler]);
+
+  return (
+    <Box
+    sx={{
+      px: 5,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: 4,
+      my: "3rem",
+    }}
+  >    
+ <Box sx={{ display: "flex", gap: 4, flexFlow: "wrap" }}>
+        <Button variant="contained" onClick={handleMenuClick}>
+          Actions
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem>
+            <TextField
+              label="Use Case"
+              value={useCase}
+              onChange={handleUseCaseChange}
+              sx={{ mb: 2 }}
+            />
+          </MenuItem>
+          <MenuItem>
+            <TextField
+              label="Folder"
+              value={folder}
+              onChange={handleFolderChange}
+              sx={{ mb: 2 }}
+            />
+          </MenuItem>
+          <MenuItem>
+            <TextField
+              label="Subfolder"
+              value={subfolder}
+              onChange={handleSubfolderChange}
+              sx={{ mb: 2 }}
+            />
+          </MenuItem>
+          <MenuItem>
+            <TextField
+              label="Filename"
+              value={filename}
+              onChange={handleFilenameChange}
+              sx={{ mb: 2 }}
+            />
+          </MenuItem>
+          <MenuItem>
+            <Button variant="contained" onClick={fetchData}>
+              Fetch Data
+            </Button>
+          </MenuItem>
+        </Menu>
+        {loading === "true" && <CircularProgress />}
+        {error && <Typography color="error">Error: {error}</Typography>}
+        {dataExploration && (
+          <DataTable data={data} columns={columns} setGranularity={setGranularity} setScaler={setScaler} />
+        )}
+      
+      </Box>
+      
+<DataExplorationChart data={data} columns={columns.map((column) => column.field)} />
+     
     </Box>
-   
-  </Box>
+    
   );
 };
 

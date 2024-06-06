@@ -7,7 +7,9 @@ export default defineConfig({
   server: {
     open: true,
     proxy: {
-      "/api": "http://leviathan.imsi.athenarc.gr:8080",
+      // "/api": "http://leviathan.imsi.athenarc.gr:8080",
+      "/api": "http://localhost:8080",
+
     },
   },
   test: {
