@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     open: true,
     proxy: {
-      "/api": "http://leviathan.imsi.athenarc.gr:8080",
+      "/api": "http://pulsar.imsi.athenarc.gr:9680",
     },
   },
   test: {
