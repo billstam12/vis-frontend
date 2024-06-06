@@ -12,7 +12,7 @@ import FormControl from "@mui/material/FormControl"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import { useAppDispatch } from "../../../store/store"
 import { fetchExplanation } from "../../../store/slices/explainabilitySlice"
-import { useTheme } from "@emotion/react"
+import { useTheme } from "@mui/material"
 
 interface ILineplot {
   width: string

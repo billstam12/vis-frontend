@@ -12,6 +12,7 @@ export interface IInitialization {
       counterfactuals: IPlotModel | null;
       influenceFunctions: IPlotModel | null;
     };
+    modelMetrics: any;
   };
   hyperparameterExplanation: {
     hyperparameterNames: string[];
@@ -23,6 +24,7 @@ export interface IInitialization {
     tables: {
       counterfactuals: IPlotModel | null;
     };
+    pipelineMetrics: any;
   };
 }
 

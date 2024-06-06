@@ -7,6 +7,9 @@ import ComparativeEvaluation from "../DashboardItems/Tables/comparativeEvaluatio
 import Grid from "@mui/material/Grid"
 import { Typography } from "@mui/material"
 import ContourPlot from "../DashboardItems/Plots/contour-plot"
+import ScatterPlot from "../DashboardItems/Plots/scatter-plot"
+import InstanceClassification from "../DashboardItems/Plots/instance-classification"
+import ConfusionMatrix from "../DashboardItems/Plots/confusion-matrix"
 
 const FeatureExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
@@ -14,6 +17,7 @@ const FeatureExplainability = () => {
 
   return (
     <>
+    {console.log(explInitialization)}
       {explInitialization ? (
         <Box
           sx={{
@@ -43,29 +47,19 @@ const FeatureExplainability = () => {
           </Box>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <ContourPlot
-                key={`2dpdp-plot`}
-                plotModel={
-                  explInitialization.hyperparameterExplanation.plots["2dpdp"] ||
-                  null
-                }
-                options={
-                  explInitialization.hyperparameterExplanation
-                    .hyperparameterNames
+              <InstanceClassification
+                key={`instance-classification`}
+                plotData={
+                  explInitialization.featureExplanation.modelMetrics
                 }
               />
             </Grid>
             <Grid container item xs={12} md={6} spacing={2}>
               <Grid item xs={12}>
-                <LinePlot
-                  key={`pdp-plot`}
-                  plotModel={
-                    explInitialization.hyperparameterExplanation.plots.pdp ||
+                <ConfusionMatrix
+                  key={`confusion-matrix`}
+                  plotData={
                     null
-                  }
-                  options={
-                    explInitialization.hyperparameterExplanation
-                      .hyperparameterNames
                   }
                 />
               </Grid>

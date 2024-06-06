@@ -14,38 +14,37 @@ import { useTheme } from "@mui/material"
 import { VegaLite } from "react-vega"
 
 interface IInstanceClassification {
-  plotModel: IPlotModel | null
-  options: string[]
+  plotData: any
 }
 
 const InstanceClassification = (props: IInstanceClassification) => {
-const theme = useTheme();
-  const getVegaliteData = (plmodel: IPlotModel | null) => {
-    if (!plmodel) return []
-    const data: { [x: string]: string }[] = []
-    plmodel.xAxis.axisValues.map((xval, idx) => {
-      plmodel.yAxis.axisValues.map((yVal, yIdx) => {
-        data.push({
-          [plmodel.xAxis.axisName]: parseFloat(xval),
-          [plmodel.yAxis.axisName]: parseFloat(yVal),
-          [plmodel.zAxis.axisName === null ? "value" : plmodel.zAxis.axisName]:
-            JSON.parse(plmodel.zAxis.axisValues[idx])[yIdx],
-        })
-      })
-    })
-    return data
-  }
 
-  const { plotModel, options } = props
+  const theme = useTheme()
+  const { plotData } = props
+  const [options, setOptions] = useState<string[]>([])
   const [xAxisOption, setXAxisOption] = useState<string>("")
   const [yAxisOption, setYAxisOption] = useState<string>("")
+
+  const getVegaData = (data: any) => {
+    let newData: {}[] = []
+    data.map((d: {}) => (
+      newData.push(Object.assign({}, d))
+    ))
+    return newData
+  }
+
+  useEffect(() => {
+    if (plotData.length > 0) {
+      setOptions(Object.keys(plotData[0]))
+    }
+  }, [])
 
   useEffect(() => {
     if (options.length > 0) {
       setXAxisOption(options[0])
       setYAxisOption(options[1])
     }
-  }, [])
+  }, [options])
 
   const handleAxisSelection =
     (axis: string) => (e: { target: { value: string } }) => {
@@ -57,6 +56,8 @@ const theme = useTheme();
     }
 
   return (
+    <>
+    {console.log(plotData)}
     <Paper
       className="Category-Item"
       elevation={2}
@@ -111,11 +112,8 @@ const theme = useTheme();
             >
               {options
                 .filter(option => option !== yAxisOption)
-                .map(feature => (
-                  <MenuItem
-                    key={`${plotModel?.plotName}-${feature}`}
-                    value={feature}
-                  >
+                .map((feature, idx) => (
+                  <MenuItem key={`xAxis-${feature}-${idx}`} value={feature}>
                     {feature}
                   </MenuItem>
                 ))}
@@ -143,11 +141,8 @@ const theme = useTheme();
             >
               {options
                 .filter(option => option !== xAxisOption)
-                .map(feature => (
-                  <MenuItem
-                    key={`${plotModel?.plotName}-${feature}`}
-                    value={feature}
-                  >
+                .map((feature, idx) => (
+                  <MenuItem key={`yAxis-${feature}-${idx}`} value={feature}>
                     {feature}
                   </MenuItem>
                 ))}
@@ -156,41 +151,41 @@ const theme = useTheme();
         </Box>
       </Box>
       <Box sx={{ width: "99%", px: 1 }}>
-        <VegaLite
-          actions={false}
-          style={{ width: "90%" }}
-          spec={{
-            width: "container",
-            autosize: { type: "fit", contains: "padding", resize: true },
-            data: {
-              values: getVegaliteData(plotModel),
-            },
-            mark: {
-              type: "line",
-              tooltip: true,
-              point: { size: 100, color: theme.palette.primary.main },
-            },
-            encoding: {
-              x: {
-                field: plotModel?.xAxis.axisName || "xAxis default",
-                type:
-                  plotModel?.xAxis.axisType === "numerical"
-                    ? "quantitative"
-                    : "ordinal",
-                // aggregate: "mean"
+        {options && (
+          <VegaLite
+            // signalListeners={signalListeners}
+            actions={false}
+            style={{ width: "90%", height: 500 }}
+            spec={{
+              width: "container",
+              height: "container",
+              autosize: { type: "fit", contains: "padding", resize: true },
+              data: {
+                values: getVegaData(plotData),
               },
-              y: {
-                field: plotModel?.yAxis.axisName || "yAxis default",
-                type:
-                  plotModel?.xAxis.axisType === "numerical"
-                    ? "quantitative"
-                    : "ordinal",
+              mark: {
+                type: "point",
+                filled: true,
+                tooltip: true,
+                point: { size: 100, color: theme.palette.primary.main },
               },
-            },
-          }}
-        />
+              encoding: {
+                x: {
+                  field: xAxisOption || "xAxis default",
+                  type: "nominal",
+                },
+                y: {
+                  field: yAxisOption || "yAxis default",
+                  type: "nominal",
+                  aggregate: "count",
+                },
+              },
+            }}
+          />
+        )}
       </Box>
     </Paper>
+    </>
   )
 }
 

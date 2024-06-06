@@ -4,6 +4,16 @@ import { IInitialization } from "../../shared/models/initialization.model";
 import { IPlotModel } from "../../shared/models/plotmodel.model";
 import { IDataExplorationRequest } from "../../shared/models/dataexploration.model";
 
+const handleInitialization = (payload: IInitialization) => {
+  const newPayload = {featureExplanation: {
+    ...payload.featureExplanation, modelMetrics: JSON.parse(payload.featureExplanation.modelMetrics)
+  }, hyperparameterExplanation: {
+    ...payload.hyperparameterExplanation, pipelineMetrics: JSON.parse(payload.hyperparameterExplanation.pipelineMetrics)
+  }
+}
+  return newPayload
+}
+
 const handleGetExplanation = (
   initializationState: IInitialization | null,
   plotMod: IPlotModel,
@@ -53,7 +63,7 @@ export const explainabilitySlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchInitialization.fulfilled, (state, action) => {
-            state.explInitialization = action.payload;
+            state.explInitialization = handleInitialization(action.payload);
             state.initLoading = false;
         })
         .addCase(fetchExplanation.fulfilled, (state, action) => {
@@ -84,7 +94,8 @@ export const explainabilitySlice = createSlice({
 
 const apiPath = 'api/';
 
-export const fetchInitialization = createAsyncThunk('explainability/fetch_initialization', async (payload: {modelName: string} ) => {
+export const fetchInitialization = createAsyncThunk('explainability/fetch_initialization', 
+  async (payload: {modelName: string, pipelineQuery: IDataExplorationRequest, modelQuery: IDataExplorationRequest} ) => {
     const requestUrl = apiPath + "initialization";
     //TODO: This should be changed in order to make dynamic calls
     

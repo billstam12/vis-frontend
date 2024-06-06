@@ -73,11 +73,12 @@ const DashboardTitle = (props: IDashboardTitle) => {
           marginLeft: -1,
           zIndex: value === 1 ? 1 : 0,
         }}
+        startIcon={<StarsIcon />}
         size="small"
         disableRipple
         onClick={handleChange(1)}
       >
-        <StarsIcon />
+        
         Experiment 71
       </Button>
       {/* <Tabs value={value} onChange={handleChange(1)}>

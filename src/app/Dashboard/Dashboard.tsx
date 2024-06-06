@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography"
 import FeatureExplainability from "../FeatureExpl/feature-explainability"
 import HyperparameterExplainability from "../HyperparamExpl/hyperparameter-explainability"
 import DataExploration from "../DataExploration/data-exploration"
+import { defaultDataExplorationRequest } from "../../shared/models/dataexploration.model"
 
 const Dashboard = () => {
   const { explInitialization, initLoading } = useAppSelector(
@@ -18,7 +19,19 @@ const Dashboard = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(fetchInitialization({ modelName: "I2Cat_Phising_model" }))
+    dispatch(
+      fetchInitialization({
+        modelName: "I2Cat_Phising_model",
+        pipelineQuery: {
+          ...defaultDataExplorationRequest,
+          datasetId: "file:///I2Cat_phising/metrics/I2Cat_phising_metrics.csv",
+        },
+        modelQuery: {
+          ...defaultDataExplorationRequest,
+          datasetId: "file:///I2Cat_phising/metrics/I2Cat_phising_validation.csv",
+        },
+      }),
+    )
   }, [])
 
   const [value, setValue] = useState(0)
@@ -37,14 +50,16 @@ const Dashboard = () => {
       >
         {initLoading && explInitialization === null ? (
           <Box sx={{ height: "100%", width: "100%" }}>
-            <CircularProgress size={"10rem"}/>
-            <Typography fontSize={"1.5rem"} color={grey[500]}>Initializing page...</Typography>
+            <CircularProgress size={"10rem"} />
+            <Typography fontSize={"1.5rem"} color={grey[500]}>
+              Initializing page...
+            </Typography>
           </Box>
         ) : (
           <>
             <DashboardTitle value={value} setValue={setValue} />
-            {value=== 0 && <HyperparameterExplainability />}
-            {value === 1 && <FeatureExplainability /> }
+            {value === 0 && <HyperparameterExplainability />}
+            {value === 1 && <FeatureExplainability />}
           </>
         )}
       </Grid>

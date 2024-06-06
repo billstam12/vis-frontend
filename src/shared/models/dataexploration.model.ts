@@ -15,3 +15,12 @@ export interface IFilter {
         max: number;
     };
 }
+
+export const defaultDataExplorationRequest: IDataExplorationRequest = {
+    datasetId: '',
+    columns: [],
+    aggFunction: '',
+    filters: [],
+    limit: 1000,
+    scaler: ''
+};
