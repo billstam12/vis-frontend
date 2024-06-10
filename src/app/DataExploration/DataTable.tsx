@@ -1,91 +1,91 @@
-import React from 'react';
-import { DataGrid, GridColDef, GridFooterContainer, GridFooter, GridToolbar } from '@mui/x-data-grid';
-import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
-
-
+import React, { useEffect, useState } from 'react';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
+import MinimizeIcon from '@mui/icons-material/Minimize';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 
 interface DataTableProps {
   data: any[];
   columns: GridColDef[];
-  setGranularity: (value: string) => void;
-  setScaler: (value: string) => void;
+  onUpdateData: (newData: any[]) => void;
+  onResetData: () => void;  // Add this line
+
 }
 
-const CustomFooter: React.FC<{ setGranularity: (value: string) => void; setScaler: (value: string) => void; }> = ({ setGranularity, setScaler }) => {
-  const [granularityAnchorEl, setGranularityAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [scalerAnchorEl, setScalerAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleGranularityClick = (event: React.MouseEvent<HTMLElement>) => {
-    setGranularityAnchorEl(event.currentTarget);
-  };
-
-  const handleGranularityClose = (option?: string) => {
-    setGranularityAnchorEl(null);
-    if (option) {
-      setGranularity(option);
-    }
-  };
-
-  const handleScalerClick = (event: React.MouseEvent<HTMLElement>) => {
-    setScalerAnchorEl(event.currentTarget);
-  };
-
-  const handleScalerClose = (option?: string) => {
-    setScalerAnchorEl(null);
-    if (option) {
-      setScaler(option);
-    }
-  };
-
-  return (
-    <GridFooterContainer>
-      <Box sx={{ flexGrow: 1 }} />
-      <Box display="flex" justifyContent="flex-end" p={2}>
-        <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={handleGranularityClick}>
-          Resample  
-        </Button>
-        <Menu
-          anchorEl={granularityAnchorEl}
-          open={Boolean(granularityAnchorEl)}
-          onClose={() => handleGranularityClose()}
-        >
-          <MenuItem onClick={() => handleGranularityClose('None')}>None</MenuItem>
-          <MenuItem onClick={() => handleGranularityClose('min')}>Min</MenuItem>
-          <MenuItem onClick={() => handleGranularityClose('mean')}>Mean</MenuItem>
-          <MenuItem onClick={() => handleGranularityClose('max')}>Max</MenuItem>
-
-        </Menu>
-        <Button variant="contained" color="primary" onClick={handleScalerClick}>
-          Scaler
-        </Button>
-        <Menu
-          anchorEl={scalerAnchorEl}
-          open={Boolean(scalerAnchorEl)}
-          onClose={() => handleScalerClose()}
-        >
-          <MenuItem onClick={() => handleScalerClose('None')}>None</MenuItem>
-          <MenuItem onClick={() => handleScalerClose('z')}>Z-normalize</MenuItem>
-          <MenuItem onClick={() => handleScalerClose('minmax')}>Min max</MenuItem>
-          <MenuItem onClick={() => handleScalerClose('log')}> Log</MenuItem>
-
-
-        </Menu>
-      </Box>
-      <GridFooter sx={{ border: 'none' }} />
-    </GridFooterContainer>
-  );
-};
-
-const DataTable: React.FC<DataTableProps> = ({ data, columns, setGranularity, setScaler }) => {
+const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onResetData }) => {
   const rows = data.map((row, index) => ({
     id: index + 1,
     ...row,
   }));
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isMaximized, setIsMaximized] = useState(false);
 
+  const handleMinimize = () => {
+    setIsVisible(!isVisible); // Toggles visibility
+  };
+
+  const handleMaximize = () => {
+    setIsMaximized(!isMaximized); // Toggles maximization for the table
+  };
+
+  const tableStyle = isMaximized ? { height: '90vh', width: '100%' } : { height: 400, width: '100%' };
+
+  const CustomToolbar = ({ onUpdateData, selectedRows, onResetData }) => {
+   
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
+        <GridToolbar />
+        
+        <Button
+        variant="text"
+        color="primary"
+        onClick={() => onUpdateData(selectedRows)}
+        // style={{ margin: '0 20px' }}
+        size="small"
+
+        >
+          Show Selected
+        </Button>
+        <Button
+        variant="text"
+        color="primary"
+        onClick={onResetData}  // This uses the onResetData function passed as a prop
+        // style={{ margin: '0 20px' }}
+        size="small"
+        >
+          Reset View
+        </Button>
+        <Box>
+          <IconButton onClick={handleMinimize} size="large">
+            <MinimizeIcon />
+          </IconButton>
+          <IconButton onClick={handleMaximize} size="large">
+            {isMaximized ? <FullscreenIcon /> : <FullscreenIcon />}
+          </IconButton>
+        </Box>
+     </Box>
+    );
+  };
+  
+  useEffect(() => {
+    console.log('Data:', data); // Log the current state of data
+  }, [data]);
+
+  useEffect(() => {
+    console.log('Columns:', columns); // Log the current state of columns
+  }, [columns]);
+
+  if (!isVisible) return <IconButton onClick={handleMinimize}><MinimizeIcon /></IconButton>;
+
+ 
   return (
-    <Box sx={{ height: 600, width: '100%' }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper sx={{ borderRadius: 2, minWidth: 300 }}>
+
+    <Box sx={{ display: isVisible ? 'block' : 'none', ...tableStyle }}>
+    <Typography variant="h6" gutterBottom>
         Table Viewer
       </Typography>
       <DataGrid
@@ -93,12 +93,24 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns, setGranularity, se
         columns={columns}
         checkboxSelection
         slots={{
-          footer: (props) => <CustomFooter {...props} setGranularity={setGranularity} setScaler={setScaler} />,
-          toolbar: GridToolbar,
+          toolbar: () => <CustomToolbar onUpdateData={onUpdateData} selectedRows={selectedRows} onResetData={onResetData}  // Pass the reset function as a prop
+          />
         }}
+        onRowSelectionModelChange={(ids) => {
+          const selectedIDs = new Set(ids);
+          const selectedRows = rows.filter((row) =>
+            selectedIDs.has(row.id),
+          );
+          setSelectedRows(selectedRows);
+        }}
+        {...rows}
       />
     </Box>
+    </Paper>
   );
 };
 
 export default DataTable;
+
+
+
