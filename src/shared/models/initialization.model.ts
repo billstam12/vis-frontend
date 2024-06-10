@@ -12,7 +12,8 @@ export interface IInitialization {
       counterfactuals: IPlotModel | null;
       influenceFunctions: IPlotModel | null;
     };
-    modelMetrics: any;
+    modelInstances: any;
+    modelConfusionMatrix: any;
   };
   hyperparameterExplanation: {
     hyperparameterNames: string[];

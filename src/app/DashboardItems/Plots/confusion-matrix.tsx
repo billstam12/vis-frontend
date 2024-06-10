@@ -83,9 +83,11 @@ const ConfusionMatrix = (props: ILineplot) => {
                 },
               },
               {
-                mark: "text",
+                mark: {type: "text", fontSize: 45},
                 encoding: {
-                  text: { field: "count", type: "quantitative", format: "d" },
+                  text: { field: "count", type: "quantitative", format: "d"},
+                  x: { field: "predicted", type: "nominal" },
+                  y: { field: "actual", type: "nominal" },
                   color: {
                     condition: {
                       test: "datum.count > 500",

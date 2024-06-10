@@ -6,7 +6,8 @@ import { IDataExplorationRequest } from "../../shared/models/dataexploration.mod
 
 const handleInitialization = (payload: IInitialization) => {
   const newPayload = {featureExplanation: {
-    ...payload.featureExplanation, modelMetrics: JSON.parse(payload.featureExplanation.modelMetrics)
+    ...payload.featureExplanation, modelInstances: JSON.parse(payload.featureExplanation.modelInstances),
+    modelConfusionMatrix: JSON.parse(payload.featureExplanation.modelConfusionMatrix)
   }, hyperparameterExplanation: {
     ...payload.hyperparameterExplanation, pipelineMetrics: JSON.parse(payload.hyperparameterExplanation.pipelineMetrics)
   }
@@ -95,7 +96,7 @@ export const explainabilitySlice = createSlice({
 const apiPath = 'api/';
 
 export const fetchInitialization = createAsyncThunk('explainability/fetch_initialization', 
-  async (payload: {modelName: string, pipelineQuery: IDataExplorationRequest, modelQuery: IDataExplorationRequest} ) => {
+  async (payload: {modelName: string, pipelineQuery: IDataExplorationRequest, modelInstancesQuery: IDataExplorationRequest, modelConfusionQuery: IDataExplorationRequest} ) => {
     const requestUrl = apiPath + "initialization";
     //TODO: This should be changed in order to make dynamic calls
     

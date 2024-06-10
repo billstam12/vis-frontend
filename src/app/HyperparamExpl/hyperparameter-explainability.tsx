@@ -1,15 +1,13 @@
 import Box from "@mui/material/Box"
 import { useAppDispatch, useAppSelector } from "../../store/store"
 import LinePlot from "../DashboardItems/Plots/line-plot"
-import TableComponent from "../DashboardItems/Tables/table"
 import ContourPlot from "../DashboardItems/Plots/contour-plot"
 import ParallelCoordinatePlot from "../DashboardItems/Plots/parallel-coordinate-plot"
-import ComparativeEvaluation from "../DashboardItems/Tables/comparativeEvaluation"
+import ComparativeEvaluation from "../DashboardItems/Tables/comparative-evaluation"
 import Grid from "@mui/material/Grid"
 
 const HyperparameterExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
-  const dispatch = useAppDispatch()
 
   return (
     <>

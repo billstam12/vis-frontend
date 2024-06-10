@@ -26,9 +26,15 @@ const Dashboard = () => {
           ...defaultDataExplorationRequest,
           datasetId: "file:///I2Cat_phising/metrics/I2Cat_phising_metrics.csv",
         },
-        modelQuery: {
+        modelInstancesQuery: {
           ...defaultDataExplorationRequest,
-          datasetId: "file:///I2Cat_phising/metrics/I2Cat_phising_validation.csv",
+          datasetId:
+            "file:///I2Cat_phising/metrics/I2Cat_phising_instances.csv",
+        },
+        modelConfusionQuery: {
+          ...defaultDataExplorationRequest,
+          datasetId:
+            "file:///I2Cat_phising/metrics/I2Cat_phising_confusion_matrix.csv",
         },
       }),
     )

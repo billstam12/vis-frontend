@@ -11,8 +11,9 @@ export interface IFilter {
     column: string;
     type: string;
     value: {
-        min: number;
-        max: number;
+        min?: number | string;
+        max?: number | string;
+        value?: number | string;
     };
 }
 

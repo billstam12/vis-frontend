@@ -1,23 +1,21 @@
 import Box from "@mui/material/Box"
 import { useAppDispatch, useAppSelector } from "../../store/store"
 import LinePlot from "../DashboardItems/Plots/line-plot"
-import TableComponent from "../DashboardItems/Tables/table"
-import ParallelCoordinatePlot from "../DashboardItems/Plots/parallel-coordinate-plot"
-import ComparativeEvaluation from "../DashboardItems/Tables/comparativeEvaluation"
 import Grid from "@mui/material/Grid"
 import { Typography } from "@mui/material"
-import ContourPlot from "../DashboardItems/Plots/contour-plot"
-import ScatterPlot from "../DashboardItems/Plots/scatter-plot"
 import InstanceClassification from "../DashboardItems/Plots/instance-classification"
 import ConfusionMatrix from "../DashboardItems/Plots/confusion-matrix"
+import { useState } from "react"
+import CounterfactualsTable from "../DashboardItems/Tables/counterfactuals-table"
 
 const FeatureExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
+  const [point, setPoint] = useState(null)
   const dispatch = useAppDispatch()
 
   return (
     <>
-    {console.log(explInitialization)}
+      {console.log(explInitialization)}
       {explInitialization ? (
         <Box
           sx={{
@@ -49,19 +47,25 @@ const FeatureExplainability = () => {
             <Grid item xs={12} md={6}>
               <InstanceClassification
                 key={`instance-classification`}
-                plotData={
-                  explInitialization.featureExplanation.modelMetrics
-                }
+                point={point}
+                setPoint={setPoint}
+                plotData={explInitialization.featureExplanation.modelInstances}
               />
             </Grid>
             <Grid container item xs={12} md={6} spacing={2}>
               <Grid item xs={12}>
-                <ConfusionMatrix
-                  key={`confusion-matrix`}
-                  plotData={
-                    null
-                  }
-                />
+                {point ? (
+                  <CounterfactualsTable
+                    key={`counterfactuals-table`}
+                    plotModel={
+                      explInitialization.featureExplanation.tables
+                        .counterfactuals
+                    }
+                    width={"auto"}
+                  />
+                ) : (
+                  <ConfusionMatrix key={`confusion-matrix`} plotData={null} />
+                )}
               </Grid>
               <Grid item xs={12}>
                 <LinePlot
@@ -94,6 +98,26 @@ const FeatureExplainability = () => {
             </Typography>
             <Typography variant="body1">Features Explainability</Typography>
           </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <LinePlot
+                key={`pdp-plot`}
+                plotModel={
+                  explInitialization.featureExplanation.plots.pdp || null
+                }
+                options={explInitialization.featureExplanation.featureNames}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <LinePlot
+                key={`ale-plot`}
+                plotModel={
+                  explInitialization.featureExplanation.plots.ale || null
+                }
+                options={explInitialization.featureExplanation.featureNames}
+              />
+            </Grid>
+          </Grid>
         </Box>
       ) : null}
     </>
