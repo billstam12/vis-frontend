@@ -1,8 +1,7 @@
 import Box from "@mui/material/Box"
-import { useAppDispatch, useAppSelector } from "../../store/store"
+import { useAppSelector } from "../../store/store"
 import LinePlot from "../DashboardItems/Plots/line-plot"
 import ContourPlot from "../DashboardItems/Plots/contour-plot"
-import ParallelCoordinatePlot from "../DashboardItems/Plots/parallel-coordinate-plot"
 import ComparativeEvaluation from "../DashboardItems/Tables/comparative-evaluation"
 import Grid from "@mui/material/Grid"
 

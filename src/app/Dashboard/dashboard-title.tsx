@@ -15,11 +15,10 @@ interface IDashboardTitle {
 }
 
 const DashboardTitle = (props: IDashboardTitle) => {
-  const { explInitialization } = useAppSelector(state => state.explainability)
+  const { explInitialization, tabs } = useAppSelector(state => state.explainability)
   const { value, setValue } = props
 
   const handleChange = (newValue: number) => (event: React.SyntheticEvent) => {
-    console.log(newValue)
     if (value === newValue) return;
     setValue(newValue)
   }
@@ -78,30 +77,28 @@ const DashboardTitle = (props: IDashboardTitle) => {
         disableRipple
         onClick={handleChange(1)}
       >
-        
-        Experiment 71
+        Variant 71
       </Button>
-      {/* <Tabs value={value} onChange={handleChange(1)}>
-        <Tab
-          key={`data-exploration-tab`}
-          label={"Data Exploration"}
-          sx={{ textTransform: "none" }}
-          disableRipple
-        />
-        {explInitialization &&
-          Object.keys(explInitialization).map((key, index) => (
-            <Tab
-              key={`${key}-tab`}
-              label={
-                key === "featureExplanation"
-                  ? "Feature Explanation"
-                  : "Hyperparameter Explanation"
-              }
-              sx={{ textTransform: "none" }}
-              disableRipple
-            />
-          ))}
-      </Tabs> */}
+      {tabs.map((tab, index) => ( <Button
+        sx={{
+          borderRadius: "20px 20px 0px 0px",
+          px: 2,
+          color: "black",
+          bgcolor: value === 1 ? "white" : "transparent",
+          border: value !== 1 ? `1px solid ${grey[400]}` : "none",
+          borderBottom: "none",
+          fontSize: "0.8rem",
+          textTransform: "none",
+          ":hover": { bgcolor: value !== 1 ? grey[400] : "white" },
+          marginLeft: -1,
+          zIndex: value === index + 2 ? 1 : 0,
+        }}
+        size="small"
+        disableRipple
+        onClick={handleChange(1)}
+      >
+        Variant {tab.id}
+      </Button>))}
     </Grid>
   )
 }

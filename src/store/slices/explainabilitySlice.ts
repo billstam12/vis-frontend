@@ -3,6 +3,7 @@ import axios from "axios";
 import { IInitialization } from "../../shared/models/initialization.model";
 import { IPlotModel } from "../../shared/models/plotmodel.model";
 import { IDataExplorationRequest } from "../../shared/models/dataexploration.model";
+import { AddTask } from "@mui/icons-material";
 
 const handleInitialization = (payload: IInitialization) => {
   const newPayload = {featureExplanation: {
@@ -46,6 +47,7 @@ interface IExplainability {
     initLoading: boolean;
     explInitialization: IInitialization | null;
     error: string | null;
+    tabs: any[];
     misclassifiedInstances: any[];
 }
 
@@ -54,6 +56,7 @@ const initialState: IExplainability = {
     initLoading: false,
     explInitialization: null, 
     error: null,
+    tabs: [],
     misclassifiedInstances: [],
 };
 
@@ -61,7 +64,14 @@ const initialState: IExplainability = {
 export const explainabilitySlice = createSlice({
     name: "explainability",
     initialState,
-    reducers: {},
+    reducers: {
+      addTab: (state, action) => {
+        state.tabs = [...state.tabs, action.payload];
+      },
+      deleteTab: (state, action) => {
+        state.tabs = state.tabs.filter((tab) => tab !== action.payload);
+      }
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchInitialization.fulfilled, (state, action) => {
             state.explInitialization = handleInitialization(action.payload);
@@ -128,6 +138,6 @@ async () => {
 
 //Reducer exports
 
-export const { } = explainabilitySlice.actions
+export const {addTab, deleteTab} = explainabilitySlice.actions
 
 export default explainabilitySlice.reducer

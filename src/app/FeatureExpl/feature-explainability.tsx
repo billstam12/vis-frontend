@@ -7,6 +7,7 @@ import InstanceClassification from "../DashboardItems/Plots/instance-classificat
 import ConfusionMatrix from "../DashboardItems/Plots/confusion-matrix"
 import { useState } from "react"
 import CounterfactualsTable from "../DashboardItems/Tables/counterfactuals-table"
+import ClassificationStatistics from "../DashboardItems/Tables/model-statistics"
 
 const FeatureExplainability = () => {
   const { explInitialization } = useAppSelector(state => state.explainability)
@@ -15,7 +16,6 @@ const FeatureExplainability = () => {
 
   return (
     <>
-      {console.log(explInitialization)}
       {explInitialization ? (
         <Box
           sx={{
@@ -68,16 +68,10 @@ const FeatureExplainability = () => {
                 )}
               </Grid>
               <Grid item xs={12}>
-                <LinePlot
+                <ClassificationStatistics
                   key={`ale-plot`}
-                  plotModel={
-                    explInitialization.hyperparameterExplanation.plots.ale ||
-                    null
-                  }
-                  options={
-                    explInitialization.hyperparameterExplanation
-                      .hyperparameterNames
-                  }
+                  selectedModel={71}
+                  plotModel={explInitialization.hyperparameterExplanation.pipelineMetrics}
                 />
               </Grid>
             </Grid>

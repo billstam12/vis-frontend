@@ -33,7 +33,6 @@ const InstanceClassification = (props: IInstanceClassification) => {
     if (checkbox) {
       newData = newData.filter(d => d.label !== d.predicted)
     }
-    console.log(newData)
     return newData
   }
 

@@ -20,6 +20,8 @@ import grey from "@mui/material/colors/grey"
 import { dummyData } from "../../../shared/data/metrics-dummy"
 import { VegaLite } from "react-vega"
 import SaveIcon from "@mui/icons-material/Save"
+import { useAppDispatch } from "../../../store/store"
+import { addTab } from "../../../store/slices/explainabilitySlice"
 
 interface ITableComponent {
   width: string
@@ -30,6 +32,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
   const { width } = props
   const [selectedOption, setSelectedOption] = useState<string>("Accuracy")
   const [viewOption, setViewOption] = useState("parallel coordinates")
+  const dispatch = useAppDispatch();
 
   const handleOption = (e: { target: { value: string } }) => {
     setSelectedOption(e.target.value)
@@ -37,6 +40,10 @@ const ComparativeEvaluation = (props: ITableComponent) => {
 
   const handleChange = (value: string) => (e: {}) => {
     setViewOption(value)
+  }
+
+  const handleTabSelection = (value: any) => (e: any) => {
+    dispatch(addTab(value))
   }
 
   return (
@@ -197,7 +204,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                 </TableHead>
                 <TableBody>
                   {dummyData.map((row, index) => (
-                    <TableRow key={`table-row-${index}`} sx={{bgcolor: index%2 !== 0 ? "white" : grey[100]}}>
+                    <TableRow key={`table-row-${index}`} sx={{bgcolor: index%2 !== 0 ? "white" : grey[100]}} onClick={handleTabSelection(row)}>
                       {Object.values(row).map((value, idx) => (
                         <TableCell key={`table-cell-${value}-${index}`}>
                           {value}
