@@ -69,7 +69,7 @@ export const explainabilitySlice = createSlice({
         state.tabs = [...state.tabs, action.payload];
       },
       deleteTab: (state, action) => {
-        state.tabs = state.tabs.filter((tab) => tab !== action.payload);
+        state.tabs = state.tabs.filter((tab) => tab.id !== action.payload);
       }
     },
     extraReducers: (builder) => {

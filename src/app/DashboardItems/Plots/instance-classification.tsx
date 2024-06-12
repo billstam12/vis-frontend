@@ -12,6 +12,7 @@ import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import grey from "@mui/material/colors/grey"
 import { Checkbox, useTheme } from "@mui/material"
 import { VegaLite } from "react-vega"
+import _ from "lodash"
 
 interface IInstanceClassification {
   plotData: any
@@ -28,8 +29,7 @@ const InstanceClassification = (props: IInstanceClassification) => {
   const [checkbox, setCheckbox] = useState<boolean>(false)
 
   const getVegaData = (data: any) => {
-    let newData: any[] = []
-    data.map((d: any) => d.id === 1 && newData.push(Object.assign({}, d)))
+    let newData: any[] = _.cloneDeep(data)
     if (checkbox) {
       newData = newData.filter(d => d.label !== d.predicted)
     }
@@ -64,8 +64,6 @@ const InstanceClassification = (props: IInstanceClassification) => {
   }
 
   const handleNewView = (view: any) => {
-    // Add event listener for point clicks
-    console.log("this is the view", view)
     view.addEventListener("click", (event: any, item: any) => {
       if (item && item.datum) {
         setPoint(item.datum)

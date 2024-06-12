@@ -13,7 +13,7 @@ import DataExploration from "../DataExploration/data-exploration"
 import { defaultDataExplorationRequest } from "../../shared/models/dataexploration.model"
 
 const Dashboard = () => {
-  const { explInitialization, initLoading } = useAppSelector(
+  const { explInitialization, initLoading, tabs } = useAppSelector(
     state => state.explainability,
   )
   const dispatch = useAppDispatch()
@@ -30,11 +30,26 @@ const Dashboard = () => {
           ...defaultDataExplorationRequest,
           datasetId:
             "file:///I2Cat_phising/metrics/I2Cat_phising_instances.csv",
+            filters: [
+              {
+                column: "id",
+                type: "equals",
+                value: 71,
+              }
+            ],
+            limit: 10000
         },
         modelConfusionQuery: {
           ...defaultDataExplorationRequest,
           datasetId:
             "file:///I2Cat_phising/metrics/I2Cat_phising_confusion_matrix.csv",
+            filters: [
+              {
+                column: "id",
+                type: "equals",
+                value: 71,
+              }
+            ]
         },
       }),
     )
@@ -65,7 +80,10 @@ const Dashboard = () => {
           <>
             <DashboardTitle value={value} setValue={setValue} />
             {value === 0 && <HyperparameterExplainability />}
-            {value === 1 && <FeatureExplainability />}
+            {value === 1 && <FeatureExplainability variantId={71} />}
+            {tabs.map((tab: any, index: number) => (
+             value === index + 2 && <FeatureExplainability variantId={tab.id} />
+            ))}
           </>
         )}
       </Grid>

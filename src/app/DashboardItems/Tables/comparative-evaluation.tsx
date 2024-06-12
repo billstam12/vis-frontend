@@ -10,7 +10,6 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
-import { styled } from "@mui/styles"
 import { useState } from "react"
 import FormControl from "@mui/material/FormControl"
 import Select from "@mui/material/Select"
@@ -20,8 +19,9 @@ import grey from "@mui/material/colors/grey"
 import { dummyData } from "../../../shared/data/metrics-dummy"
 import { VegaLite } from "react-vega"
 import SaveIcon from "@mui/icons-material/Save"
-import { useAppDispatch } from "../../../store/store"
+import { useAppDispatch, useAppSelector } from "../../../store/store"
 import { addTab } from "../../../store/slices/explainabilitySlice"
+import blue from "@mui/material/colors/blue"
 
 interface ITableComponent {
   width: string
@@ -32,6 +32,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
   const { width } = props
   const [selectedOption, setSelectedOption] = useState<string>("Accuracy")
   const [viewOption, setViewOption] = useState("parallel coordinates")
+  const {tabs} = useAppSelector(state => state.explainability)
   const dispatch = useAppDispatch();
 
   const handleOption = (e: { target: { value: string } }) => {
@@ -204,7 +205,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                 </TableHead>
                 <TableBody>
                   {dummyData.map((row, index) => (
-                    <TableRow key={`table-row-${index}`} sx={{bgcolor: index%2 !== 0 ? "white" : grey[100]}} onClick={handleTabSelection(row)}>
+                    <TableRow key={`table-row-${index}`} sx={{bgcolor: tabs.includes(row) ? blue[100] : index%2 !== 0 ? "white" : grey[100]}} onClick={handleTabSelection(row)}>
                       {Object.values(row).map((value, idx) => (
                         <TableCell key={`table-cell-${value}-${index}`}>
                           {value}
@@ -267,7 +268,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                     },
                   },
                   {
-                    mark: "line",
+                    mark: {type: "line", point: true},
                     encoding: {
                       color: {
                         type: "nominal",

@@ -1,13 +1,13 @@
-import Box from "@mui/material/Box"
-import Grid from "@mui/material/Grid"
-import Tab from "@mui/material/Tab"
-import Tabs from "@mui/material/Tabs"
-import Typography from "@mui/material/Typography"
+ import Grid from "@mui/material/Grid"
 import grey from "@mui/material/colors/grey"
-import { Dispatch, SetStateAction, useState } from "react"
-import { useAppSelector } from "../../store/store"
+import { Dispatch, SetStateAction, useRef, useState } from "react"
+import { useAppDispatch, useAppSelector } from "../../store/store"
 import Button from "@mui/material/Button"
-import StarsIcon from '@mui/icons-material/Stars';
+import StarsIcon from "@mui/icons-material/Stars"
+import HighlightOffIcon from "@mui/icons-material/HighlightOff"
+import red from "@mui/material/colors/red"
+import { deleteTab } from "../../store/slices/explainabilitySlice"
+import IconButton from "@mui/material/IconButton"
 
 interface IDashboardTitle {
   value: number
@@ -15,12 +15,20 @@ interface IDashboardTitle {
 }
 
 const DashboardTitle = (props: IDashboardTitle) => {
-  const { explInitialization, tabs } = useAppSelector(state => state.explainability)
+  const { explInitialization, tabs } = useAppSelector(
+    state => state.explainability,
+  )
   const { value, setValue } = props
+  const dispatch = useAppDispatch()
 
   const handleChange = (newValue: number) => (event: React.SyntheticEvent) => {
-    if (value === newValue) return;
+    if (value === newValue) return
     setValue(newValue)
+  }
+
+  const handleRemoveTab = (tab: any, prevTab: number) => () => {
+    prevTab + 1 === value && setValue(prevTab)
+    dispatch(deleteTab(tab.id))
   }
 
   return (
@@ -43,14 +51,14 @@ const DashboardTitle = (props: IDashboardTitle) => {
           borderRadius: "20px 20px 0px 0px",
           px: 2,
           color: "black",
-          bgcolor: value === 0 ? "white" : "transparent",
+          bgcolor: value === 0 ? "white" : grey[300],
           border: value !== 0 ? `1px solid ${grey[400]}` : "none",
           borderBottom: "none",
           fontSize: "0.8rem",
           textTransform: "none",
           ":hover": { bgcolor: value !== 0 ? grey[400] : "white" },
           boxShadow: "0 0 -25px 0 #001f3f",
-          zIndex: value === 0 ? 1 : 0
+          zIndex: value === 0 ? 100 : tabs.length + 2,
         }}
         size="small"
         disableRipple
@@ -63,14 +71,14 @@ const DashboardTitle = (props: IDashboardTitle) => {
           borderRadius: "20px 20px 0px 0px",
           px: 2,
           color: "black",
-          bgcolor: value === 1 ? "white" : "transparent",
+          bgcolor: value === 1 ? "white" : grey[300],
           border: value !== 1 ? `1px solid ${grey[400]}` : "none",
           borderBottom: "none",
           fontSize: "0.8rem",
           textTransform: "none",
           ":hover": { bgcolor: value !== 1 ? grey[400] : "white" },
           marginLeft: -1,
-          zIndex: value === 1 ? 1 : 0,
+          zIndex: value === 1 ? 100 : tabs.length + 1,
         }}
         startIcon={<StarsIcon />}
         size="small"
@@ -79,26 +87,33 @@ const DashboardTitle = (props: IDashboardTitle) => {
       >
         Variant 71
       </Button>
-      {tabs.map((tab, index) => ( <Button
-        sx={{
-          borderRadius: "20px 20px 0px 0px",
-          px: 2,
-          color: "black",
-          bgcolor: value === 1 ? "white" : "transparent",
-          border: value !== 1 ? `1px solid ${grey[400]}` : "none",
-          borderBottom: "none",
-          fontSize: "0.8rem",
-          textTransform: "none",
-          ":hover": { bgcolor: value !== 1 ? grey[400] : "white" },
-          marginLeft: -1,
-          zIndex: value === index + 2 ? 1 : 0,
-        }}
-        size="small"
-        disableRipple
-        onClick={handleChange(1)}
-      >
-        Variant {tab.id}
-      </Button>))}
+      {tabs.map((tab, index) => (
+        <Button
+          key={`tab-${tab.id}`}
+          sx={{
+            borderRadius: "20px 20px 0px 0px",
+            px: 2,
+            color: "black",
+            bgcolor: value === index + 2 ? "white" : grey[300],
+            border: value !== index + 2 ? `1px solid ${grey[400]}` : "none",
+            borderBottom: "none",
+            fontSize: "0.8rem",
+            textTransform: "none",
+            ":hover": { bgcolor: value !== index + 2 ? grey[400] : "white" },
+            marginLeft: -1,
+            zIndex: value === index + 2 ? 100 : tabs.length - index,
+          }}
+          size="small"
+          disableRipple
+          onClick={handleChange(index + 2)}
+          // endIcon={<HighlightOffIcon onClick={handleRemoveTab(tab, index+1, index)} sx={{"&:hover": { color: red[400]}}} />}
+        >
+          Variant {tab.id}
+          <IconButton aria-label="delete" size="small" sx={{zIndex: 999}} onClick={handleRemoveTab(tab, index+1)}>
+            <HighlightOffIcon fontSize="inherit" />
+          </IconButton>
+        </Button>
+      ))}
     </Grid>
   )
 }

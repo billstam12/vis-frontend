@@ -7,13 +7,30 @@ import { VegaLite } from "react-vega"
 import InfoIcon from "@mui/icons-material/Info"
 import { IPlotModel } from "../../../shared/models/plotmodel.model"
 import grey from "@mui/material/colors/grey"
+import { useEffect, useState } from "react"
 
 interface ILineplot {
-  plotData: IPlotModel | null
+  metrics: any
+  variantId: number
 }
 
 const ConfusionMatrix = (props: ILineplot) => {
-  const { plotData } = props
+  const { metrics, variantId } = props
+  const [plotData, setPlotData] = useState<any>(null)
+
+  useEffect(() => {
+    if (metrics) {
+      const filteredData = metrics.filter(
+        (plot: any) => plot.id === variantId,
+      )[0]
+      setPlotData([
+        { actual: 1, predicted: 1, count: filteredData.true_positives },
+        { actual: 1, predicted: 0, count: filteredData.true_negatives },
+        { actual: 0, predicted: 1, count: filteredData.false_positives },
+        { actual: 0, predicted: 0, count: filteredData.false_negatives },
+      ])
+    }
+  }, [])
 
   return (
     <Paper
@@ -26,7 +43,7 @@ const ConfusionMatrix = (props: ILineplot) => {
         flexDirection: "column",
         rowGap: 0,
         minWidth: "300px",
-        height: "100%",
+        height: "70%",
       }}
     >
       <Box
@@ -48,7 +65,7 @@ const ConfusionMatrix = (props: ILineplot) => {
           </IconButton>
         </Tooltip>
       </Box>
-      <Box sx={{ width: "99%", px: 1, py: 1 }}>
+      <Box sx={{ width: "99%", px: 1, py: 1, display: "flex", alignItems: "center", height: "100%" }}>
         <VegaLite
           actions={false}
           style={{ width: "90%" }}
@@ -57,12 +74,7 @@ const ConfusionMatrix = (props: ILineplot) => {
             height: 300,
             autosize: { type: "fit", contains: "padding", resize: true },
             data: {
-              values: [
-                { actual: 1, predicted: 1, count: 1010 },
-                { actual: 1, predicted: 0, count: 1120 },
-                { actual: 0, predicted: 1, count: 233 },
-                { actual: 0, predicted: 0, count: 242 },
-              ],
+              values: plotData,
             },
             layer: [
               {
@@ -83,9 +95,9 @@ const ConfusionMatrix = (props: ILineplot) => {
                 },
               },
               {
-                mark: {type: "text", fontSize: 45},
+                mark: { type: "text", fontSize: 45 },
                 encoding: {
-                  text: { field: "count", type: "quantitative", format: "d"},
+                  text: { field: "count", type: "quantitative", format: "d" },
                   x: { field: "predicted", type: "nominal" },
                   y: { field: "actual", type: "nominal" },
                   color: {

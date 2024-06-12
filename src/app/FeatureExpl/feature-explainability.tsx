@@ -9,8 +9,13 @@ import { useState } from "react"
 import CounterfactualsTable from "../DashboardItems/Tables/counterfactuals-table"
 import ClassificationStatistics from "../DashboardItems/Tables/model-statistics"
 
-const FeatureExplainability = () => {
+interface IFeatureExplainability {
+  variantId: number
+}
+
+const FeatureExplainability = (props: IFeatureExplainability) => {
   const { explInitialization } = useAppSelector(state => state.explainability)
+  const { variantId } = props
   const [point, setPoint] = useState(null)
   const dispatch = useAppDispatch()
 
@@ -30,6 +35,27 @@ const FeatureExplainability = () => {
           <Box
             sx={{
               width: "100%",
+              columnGap: 1,
+              rowGap: 4,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: 600, fontSize: "1.5rem" }}
+            >
+            Summary
+            </Typography>
+                <ClassificationStatistics
+                  key={`ale-plot`}
+                  variantId={variantId}
+                  plotModel={explInitialization.hyperparameterExplanation.pipelineMetrics}
+                />
+            </Box>
+          <Box
+            sx={{
+              width: "100%",
               display: "flex",
               alignItems: "center",
               columnGap: 1,
@@ -39,7 +65,7 @@ const FeatureExplainability = () => {
               variant="body1"
               sx={{ fontWeight: 600, fontSize: "1.5rem" }}
             >
-              Experiment Variant 71:
+              Experiment Variant {variantId}:
             </Typography>
             <Typography variant="body1">Classification Report</Typography>
           </Box>
@@ -52,8 +78,8 @@ const FeatureExplainability = () => {
                 plotData={explInitialization.featureExplanation.modelInstances}
               />
             </Grid>
-            <Grid container item xs={12} md={6} spacing={2}>
-              <Grid item xs={12}>
+            {/* <Grid container item xs={12}  spacing={2}> */}
+              <Grid item md={6} xs={12}>
                 {point ? (
                   <CounterfactualsTable
                     key={`counterfactuals-table`}
@@ -64,16 +90,9 @@ const FeatureExplainability = () => {
                     width={"auto"}
                   />
                 ) : (
-                  <ConfusionMatrix key={`confusion-matrix`} plotData={null} />
+                  <ConfusionMatrix key={`confusion-matrix`} metrics={explInitialization.hyperparameterExplanation.pipelineMetrics} variantId={variantId} />
                 )}
-              </Grid>
-              <Grid item xs={12}>
-                <ClassificationStatistics
-                  key={`ale-plot`}
-                  selectedModel={71}
-                  plotModel={explInitialization.hyperparameterExplanation.pipelineMetrics}
-                />
-              </Grid>
+              {/* </Grid> */}
             </Grid>
           </Grid>
           <Box
@@ -88,7 +107,7 @@ const FeatureExplainability = () => {
               variant="body1"
               sx={{ fontWeight: 600, fontSize: "1.5rem" }}
             >
-              Experiment Variant 71:
+              Experiment Variant {variantId}:
             </Typography>
             <Typography variant="body1">Features Explainability</Typography>
           </Box>

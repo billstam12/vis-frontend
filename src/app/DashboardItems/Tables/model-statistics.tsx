@@ -11,16 +11,16 @@ import { green, red } from "@mui/material/colors"
 
 interface ITableComponent {
   plotModel: any[]
-  selectedModel: number
+  variantId: number
 }
 
 const ModelStatistics = (props: ITableComponent) => {
-  const { plotModel, selectedModel } = props
+  const { plotModel, variantId } = props
   const [statistics, setStatistics] = useState<any>({})
 
   useEffect(() => {
-    const selectedModelInfo = plotModel.filter((plot: any) => plot.id === selectedModel)[0]
-    const restModelInfo = plotModel.filter((plot: any) => plot.id !== selectedModel)
+    const selectedModelInfo = plotModel.filter((plot: any) => plot.id === variantId)[0]
+    const restModelInfo = plotModel.filter((plot: any) => plot.id !== variantId)
     const restModelGroupedInfo = restModelInfo.reduce((acc: any, curval: any) => (
       {...acc, precision: [...acc.precision, curval.precision],
       runtime: [...acc.runtime, curval.runtime],
@@ -32,7 +32,6 @@ const ModelStatistics = (props: ITableComponent) => {
     avgRuntime: restModelGroupedInfo.runtime.reduce((acc: number, curval: number) => acc + curval, 0) / restModelGroupedInfo.runtime.length,
     avgRecall: restModelGroupedInfo.recall.reduce((acc: number, curval: number) => acc + curval, 0) / restModelGroupedInfo.recall.length,
     avgAccuracy: restModelGroupedInfo.accuracy.reduce((acc: number, curval: number) => acc + curval, 0) / restModelGroupedInfo.accuracy.length}
-    console.log(finalStatistics)
     const final = {
       row1: [
         {name: "Precision", value: selectedModelInfo.precision, avgDiff: (selectedModelInfo.precision/finalStatistics.avgPrecision * 100) - 100},
@@ -45,8 +44,6 @@ const ModelStatistics = (props: ITableComponent) => {
     }
     setStatistics(final)
   }, [])
-
-  const plotInfo = plotModel.filter((plot: any) => plot.id === 71)[0]
 
   return (
     <>
@@ -74,16 +71,17 @@ const ModelStatistics = (props: ITableComponent) => {
           </Tooltip>
         </Box>
         <Grid sx={{ p: 2 }} container spacing={3}>
-          {Object.keys(statistics).map((key: string) => (
-            <Grid xs={12} item container spacing={2}>
-            {statistics[key].map((metric: any) => (<Grid xs={12} md={6} item>
+          {Object.keys(statistics).map((key: string, index: number) => (
+            <Grid xs={12} md={12} lg={6} key={`statistics-row-${index}`} item container spacing={2}>
+            {statistics[key].map((metric: any) => (
+              <Grid key={`statistics-${metric.name}`} xs={12} md={6} item>
               <Paper sx={{p: 2}}>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography fontWeight={600}>{metric.name}</Typography>
                   <Typography sx={{color: metric.avgDiff > 0 ? green[400] : red[400]}}>{parseInt(metric.avgDiff)}%</Typography>
                 </Box>
                 <Box sx={{ textAlign: "center" }}>
-                  <Typography fontSize={22}>{parseFloat(metric.value).toFixed(3)}</Typography>
+                  <Typography fontSize={22}>{parseFloat(metric.value).toFixed(3)}{metric.name === "Runtime" && "s"}</Typography>
                 </Box>
               </Paper>
             </Grid>))}

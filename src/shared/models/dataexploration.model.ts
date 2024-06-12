@@ -14,7 +14,7 @@ export interface IFilter {
         min?: number | string;
         max?: number | string;
         value?: number | string;
-    };
+    } | number | string;
 }
 
 export const defaultDataExplorationRequest: IDataExplorationRequest = {
