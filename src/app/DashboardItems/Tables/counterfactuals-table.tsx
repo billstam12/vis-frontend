@@ -15,13 +15,12 @@ import { styled } from "@mui/styles"
 import grey from "@mui/material/colors/grey"
 
 interface ITableComponent {
-  width: string
   plotModel: IPlotModel | null
   children?: React.ReactNode;
 }
 
 const CounterfactualsTable = (props: ITableComponent) => {
-  const { width, plotModel } = props
+  const { plotModel } = props
 
 
   return (
@@ -32,13 +31,12 @@ const CounterfactualsTable = (props: ITableComponent) => {
       elevation={2}
       sx={{
         borderRadius: 4,
-        width: width,
+        width: "100%",
         display: "flex",
         flexDirection: "column",
         rowGap: 0,
         minWidth: "300px",
-        overflow: "hidden",
-        height: "100%"
+        overflow: "hidden"
       }}
     >
       <Box sx={{ px: 1.5,
@@ -57,7 +55,7 @@ const CounterfactualsTable = (props: ITableComponent) => {
         </Tooltip>
       </Box>
       {props.children || null}
-      <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
         <TableContainer component={Paper} sx={{width: "99%"}}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>

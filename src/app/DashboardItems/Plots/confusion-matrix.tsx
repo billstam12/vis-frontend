@@ -59,7 +59,7 @@ const ConfusionMatrix = (props: ILineplot) => {
           {"Confusion Matrix"}
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Tooltip title={"Description not available"}>
+        <Tooltip title={"A confusion matrix plot is a visual representation used to evaluate the performance of a classification algorithm."}>
           <IconButton>
             <InfoIcon />
           </IconButton>

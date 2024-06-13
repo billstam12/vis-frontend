@@ -8,6 +8,8 @@ import { useEffect, useState } from "react"
 import Grid from "@mui/material/Grid"
 import grey from "@mui/material/colors/grey"
 import { green, red } from "@mui/material/colors"
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface ITableComponent {
   plotModel: any[]
@@ -47,9 +49,9 @@ const ModelStatistics = (props: ITableComponent) => {
 
   return (
     <>
-      <Paper
+      <Box
         className="Category-Item"
-        elevation={2}
+        // elevation={2}
         sx={{
           borderRadius: 4,
           display: "flex",
@@ -59,7 +61,7 @@ const ModelStatistics = (props: ITableComponent) => {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 1.5, pt: 1.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
+        {/* <Box sx={{ px: 1.5, pt: 1.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
           <Typography fontSize={"1rem"} fontWeight={600}>
             {"Model Statistics"}
           </Typography>
@@ -69,26 +71,28 @@ const ModelStatistics = (props: ITableComponent) => {
               <InfoIcon />
             </IconButton>
           </Tooltip>
-        </Box>
+        </Box> */}
         <Grid sx={{ p: 2 }} container spacing={3}>
           {Object.keys(statistics).map((key: string, index: number) => (
             <Grid xs={12} md={12} lg={6} key={`statistics-row-${index}`} item container spacing={2}>
             {statistics[key].map((metric: any) => (
               <Grid key={`statistics-${metric.name}`} xs={12} md={6} item>
               <Paper sx={{p: 2}}>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography fontWeight={600}>{metric.name}</Typography>
-                  <Typography sx={{color: metric.avgDiff > 0 ? green[400] : red[400]}}>{parseInt(metric.avgDiff)}%</Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "centers", columnGap: 1 }}>
+                  <Typography fontWeight={600}>{metric.name}:</Typography>
+                  <Typography>{parseFloat(metric.value).toFixed(3)}{metric.name === "Runtime" && "s"}</Typography>
                 </Box>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography fontSize={22}>{parseFloat(metric.value).toFixed(3)}{metric.name === "Runtime" && "s"}</Typography>
+                <Box sx={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
+                  {metric.avgDiff > 0 ? <ArrowDropUpIcon sx={{color: green[400]}}/> : <ArrowDropDownIcon sx={{color: red[400]}}/>}
+                <Typography sx={{mr: 0.5}}>{parseInt(metric.avgDiff)}%</Typography>
+                <Typography>vs. experiment average</Typography>
                 </Box>
               </Paper>
             </Grid>))}
           </Grid>
           ))}
         </Grid>
-      </Paper>
+      </Box>
     </>
   )
 }

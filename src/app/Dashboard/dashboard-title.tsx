@@ -27,11 +27,14 @@ const DashboardTitle = (props: IDashboardTitle) => {
   }
 
   const handleRemoveTab = (tab: any, prevTab: number) => () => {
-    prevTab + 1 === value && setValue(prevTab)
+    // prevTab + 1 === value && setValue(prevTab)
+    setValue(0)
     dispatch(deleteTab(tab.id))
   }
 
   return (
+    <>
+    {console.log(value)}
     <Grid
       className="dashboard-title"
       item
@@ -115,6 +118,7 @@ const DashboardTitle = (props: IDashboardTitle) => {
         </Button>
       ))}
     </Grid>
+    </>
   )
 }
 

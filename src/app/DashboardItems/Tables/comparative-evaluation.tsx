@@ -44,6 +44,7 @@ const ComparativeEvaluation = (props: ITableComponent) => {
   }
 
   const handleTabSelection = (value: any) => (e: any) => {
+    if(tabs.includes(value)) return;
     dispatch(addTab(value))
   }
 
@@ -236,10 +237,10 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                       "max_depth",
                       "min_child_weight",
                       "learning_rate",
-                      "Precision",
-                      "Recall",
-                      "Accuracy",
-                      "Runtime",
+                      // "Precision",
+                      // "Recall",
+                      // "Accuracy",
+                      // "Runtime",
                     ],
                   },
                   {
@@ -268,12 +269,12 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                     },
                   },
                   {
-                    mark: {type: "line", point: true},
+                    mark: {type: "line", point: true, strokeWidth: 4},
                     encoding: {
                       color: {
-                        type: "nominal",
+                        type: "quantitative",
                         field: selectedOption,
-                        legend: null,
+                        scale: {range: ["#ffee58", "#e64a19"]}
                       },
                       detail: { type: "nominal", field: "index" },
                       opacity: { value: 0.3 },
@@ -299,18 +300,18 @@ const ComparativeEvaluation = (props: ITableComponent) => {
                         {
                           field: "n_estimators",
                         },
-                        {
-                          field: "Precision",
-                        },
-                        {
-                          field: "Recall",
-                        },
-                        {
-                          field: "Accuracy",
-                        },
-                        {
-                          field: "Runtime",
-                        },
+                        // {
+                        //   field: "Precision",
+                        // },
+                        // {
+                        //   field: "Recall",
+                        // },
+                        // {
+                        //   field: "Accuracy",
+                        // },
+                        // {
+                        //   field: "Runtime",
+                        // },
                       ],
                     },
                   },

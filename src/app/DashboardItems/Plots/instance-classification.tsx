@@ -101,7 +101,7 @@ const InstanceClassification = (props: IInstanceClassification) => {
             {"Instance Classification"}
           </Typography>
           <Box sx={{ flex: 1 }} />
-          <Tooltip title={"Description not available"}>
+          <Tooltip title={"An instance classification plot is a visualization used to depict the performance of a classification model on individual data instances."}>
             <IconButton>
               <InfoIcon />
             </IconButton>

@@ -45,14 +45,16 @@ const FeatureExplainability = (props: IFeatureExplainability) => {
               variant="body1"
               sx={{ fontWeight: 600, fontSize: "1.5rem" }}
             >
-            Summary
+              Summary
             </Typography>
-                <ClassificationStatistics
-                  key={`ale-plot`}
-                  variantId={variantId}
-                  plotModel={explInitialization.hyperparameterExplanation.pipelineMetrics}
-                />
-            </Box>
+            <ClassificationStatistics
+              key={`ale-plot`}
+              variantId={variantId}
+              plotModel={
+                explInitialization.hyperparameterExplanation.pipelineMetrics
+              }
+            />
+          </Box>
           <Box
             sx={{
               width: "100%",
@@ -78,23 +80,26 @@ const FeatureExplainability = (props: IFeatureExplainability) => {
                 plotData={explInitialization.featureExplanation.modelInstances}
               />
             </Grid>
-            {/* <Grid container item xs={12}  spacing={2}> */}
-              <Grid item md={6} xs={12}>
-                {point ? (
-                  <CounterfactualsTable
-                    key={`counterfactuals-table`}
-                    plotModel={
-                      explInitialization.featureExplanation.tables
-                        .counterfactuals
-                    }
-                    width={"auto"}
-                  />
-                ) : (
-                  <ConfusionMatrix key={`confusion-matrix`} metrics={explInitialization.hyperparameterExplanation.pipelineMetrics} variantId={variantId} />
-                )}
-              {/* </Grid> */}
+            <Grid item md={6} xs={12}>
+              <ConfusionMatrix
+                key={`confusion-matrix`}
+                metrics={
+                  explInitialization.hyperparameterExplanation.pipelineMetrics
+                }
+                variantId={variantId}
+              />
             </Grid>
           </Grid>
+          <Box>
+            {point && (
+              <CounterfactualsTable
+                key={`counterfactuals-table`}
+                plotModel={
+                  explInitialization.featureExplanation.tables.counterfactuals
+                }
+              />
+            )}
+          </Box>
           <Box
             sx={{
               width: "100%",
