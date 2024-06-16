@@ -274,7 +274,6 @@ const DataExploration: React.FC = () => {
       </Grid>
       <Grid item xs={3}>
         <Paper elevation={3}>
-          <Typography variant="subtitle1">Filter Section</Typography>
           <Grid item xs={12}>
         <FilterForm
           columns={columns}
@@ -291,7 +290,6 @@ const DataExploration: React.FC = () => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Paper elevation={3}>
-              <Typography variant="subtitle1">Table Section</Typography>
               <TableContainer component={Paper}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {loading && <CircularProgress />}
@@ -310,7 +308,6 @@ const DataExploration: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <Paper elevation={3} style={{ height: 300 }}>
-              <Typography variant="subtitle1">Time Series Graph</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
               {loading && <CircularProgress />}

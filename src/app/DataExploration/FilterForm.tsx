@@ -1,5 +1,8 @@
 import React from 'react';
-import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography, OutlinedInput } from '@mui/material';
+import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography, OutlinedInput, Paper, IconButton, Tooltip } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import InfoIcon from "@mui/icons-material/Info"
+
 
 const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAllFilters}) => {
     const [selectedColumn, setSelectedColumn] = React.useState('');
@@ -45,7 +48,33 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
     };
   
     return (
-      <Box>
+      <Paper className="Category-Item"
+      elevation={2}
+      sx={{
+        borderRadius: 2,
+        width: "inherit",
+        display: "flex",
+        flexDirection: "column",
+        rowGap: 0,
+        minWidth: "300px",
+        height: "99%",
+      }}>
+
+<Box sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
+
+
+    <Typography fontSize={"1rem"} fontWeight={600}>
+        Filter Selection 
+    </Typography>
+    <Box sx={{ flex: 1 }} />
+
+<Tooltip title={"Description not available"}>
+  <IconButton>
+    <InfoIcon />
+  </IconButton>
+</Tooltip>
+</Box>
+<Box>
         <FormControl fullWidth margin="normal">
           <InputLabel>Column</InputLabel>
           <Select
@@ -101,6 +130,7 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
         ))}
       </Box>
       </Box>
+      </Paper>
     );
   };
   

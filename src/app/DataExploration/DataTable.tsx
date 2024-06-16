@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
+import { Box, Button, IconButton, Paper, Tooltip, Typography } from '@mui/material';
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { grey } from '@mui/material/colors';
+import { VegaLite } from 'react-vega';
+import InfoIcon from "@mui/icons-material/Info"
+
 
 
 interface DataTableProps {
@@ -31,7 +35,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
     setIsMaximized(!isMaximized); // Toggles maximization for the table
   };
 
-  const tableStyle = isMaximized ? { height: '90vh', width: '100%' } : { height: 400, width: '100%' };
+  const tableStyle = isMaximized ? { height: '90vh', width: '100%' } : { height: 400, width: '99%' };
 
   const CustomToolbar = ({ onUpdateData, selectedRows, onResetData }) => {
    
@@ -82,12 +86,36 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
 
  
   return (
-    <Paper sx={{ borderRadius: 2, minWidth: 300 }}>
+    <Paper className="Category-Item"
+    elevation={2}
+    sx={{
+      borderRadius: 2,
+      width: "inherit",
+      display: "flex",
+      flexDirection: "column",
+      rowGap: 0,
+      minWidth: "300px",
+      height: "100%",
+    }}>
 
-    <Box sx={{ display: isVisible ? 'block' : 'none', ...tableStyle }}>
-    <Typography variant="h6" gutterBottom>
+<Box sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
+
+
+    <Typography fontSize={"1rem"} fontWeight={600}>
         Table Viewer
-      </Typography>
+    </Typography>
+    <Box sx={{ flex: 1 }} />
+
+<Tooltip title={"Description not available"}>
+  <IconButton>
+    <InfoIcon />
+  </IconButton>
+</Tooltip>
+</Box>
+<Box sx={{display: isVisible ? 'block' : 'none', ...tableStyle  }}>
+
+
+
       <DataGrid
         rows={rows}
         columns={columns}
@@ -108,6 +136,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
     </Box>
     </Paper>
   );
+
 };
 
 export default DataTable;
