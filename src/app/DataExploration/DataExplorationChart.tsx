@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Paper, Switch, FormControlLabel, Typography, FormControl, Button, InputLabel, Select, MenuItem, OutlinedInput, Chip, TextField } from '@mui/material';
+import { Box, Paper, Switch, FormControlLabel, Typography, FormControl, Button, InputLabel, Select, MenuItem, OutlinedInput, Chip, TextField, Tooltip, IconButton } from '@mui/material';
 import { VegaLite, VisualizationSpec } from 'react-vega';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
+import InfoIcon from "@mui/icons-material/Info"
 
 interface Column {
     field: string;
@@ -94,7 +95,13 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
         <Typography variant="h6" gutterBottom>
             Linechart Viewer
         </Typography>
+        
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Tooltip title={"Description not available"}>
+          <IconButton>
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
             <FormControl sx={{ minWidth: 120 }}>
                 <InputLabel id="demo-multiple-chip-label">Select Variables</InputLabel>
                 <Select

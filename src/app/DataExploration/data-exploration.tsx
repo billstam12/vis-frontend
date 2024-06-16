@@ -156,7 +156,6 @@ import DataTable from './DataTable';
 import DataExplorationChart from './DataExplorationChart';
 import { IDataExplorationRequest } from '../../shared/models/dataexploration.model';
 import FilterForm from './FilterForm';
-import ControlPanel from './ControlPanel';
 
 const DataExploration: React.FC = () => {
 
@@ -175,16 +174,6 @@ const DataExploration: React.FC = () => {
   const [originalData, setOriginalData] = useState<any[]>([]); // Store original data
   const [isFullScreen, setIsFullScreen] = useState(false); // State to manage full-screen mode
   const [filters, setFilters] = useState([]);
-  const handlePathSubmit = (path) => {
-    fetchDataExploration({
-      datasetId: `file://${path}`,
-      columns: [...selectedCols, datetimeColumn],
-      aggFunction: granularity,
-      filters: filters,
-      limit: limit,
-      scaler: scaler,
-    });
-  };
 
   const handleAddFilter = (newFilter) => {
     setFilters([...filters, newFilter]);
@@ -201,11 +190,12 @@ const DataExploration: React.FC = () => {
     setFilters([]);  // Resets the filters state to an empty array
 };
   
-
+ const karfotela= "file:///home/pgidarakos/OLDIES/xxp_data/test.csv";
+//  const karfotela="file:///Users/admin/Desktop/test.csv"
   const fetchData = () => {
     if (selectedCols.length > 0 && datetimeColumn) {
       const requestData: IDataExplorationRequest = {
-        datasetId: "file:///Users/admin/Desktop/test.csv",
+        datasetId: karfotela,
         columns: [...selectedCols, datetimeColumn], // Ensure datetimeColumn is included
         aggFunction: granularity,
         filters: filters,
@@ -225,7 +215,7 @@ const DataExploration: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchDataExploration({
-      datasetId: "file:///Users/admin/Desktop/test.csv",
+      datasetId: karfotela,
       columns: [],
       aggFunction: '',
       filters: filters,
@@ -277,7 +267,7 @@ const DataExploration: React.FC = () => {
   return (
     <Grid container spacing={2}>
         <Grid item xs={12}>
-      <ControlPanel onPathSubmit={handlePathSubmit} />
+      {/* <ControlPanel onPathSubmit={handlePathSubmit} /> */}
     </Grid>
       <Grid item xs={12}>
         <Typography variant="h6">Dataset Exploration</Typography>

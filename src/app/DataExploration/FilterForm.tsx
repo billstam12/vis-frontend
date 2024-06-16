@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography } from '@mui/material';
+import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography, OutlinedInput } from '@mui/material';
 
 const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAllFilters}) => {
     const [selectedColumn, setSelectedColumn] = React.useState('');
@@ -52,6 +52,15 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
             value={selectedColumn}
             label="Column"
             onChange={(e) => setSelectedColumn(e.target.value)}
+            input={<OutlinedInput id="select-multiple-chip" label="Column" />}
+                MenuProps={{
+                    PaperProps: {
+                        style: {
+                            maxHeight: 224,
+                            width: 250,
+                        },
+                    },
+                }}
           >
             {columns.map((col) => (
               <MenuItem key={col.field} value={col.field}>{col.headerName}</MenuItem>
