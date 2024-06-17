@@ -1,10 +1,12 @@
 import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom"
-import Dashboard from "./app/Dashboard/dashboard";
+import ExplainabilityTask from "./app/ExplainabilityTask/explainability-task";
+import ProgressPage from "./app/ProgressPage/progress-page";
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/explainability" element={<ExplainabilityTask />} />
+        <Route path="/" element={<ProgressPage />} />
     </>
   ));
 

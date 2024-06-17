@@ -14,7 +14,7 @@ interface IDashboardTitle {
   setValue: Dispatch<SetStateAction<number>>
 }
 
-const DashboardTitle = (props: IDashboardTitle) => {
+const ExplainabilityTaskHeader = (props: IDashboardTitle) => {
   const { explInitialization, tabs } = useAppSelector(
     state => state.explainability,
   )
@@ -34,7 +34,6 @@ const DashboardTitle = (props: IDashboardTitle) => {
 
   return (
     <>
-    {console.log(value)}
     <Grid
       className="dashboard-title"
       item
@@ -122,4 +121,4 @@ const DashboardTitle = (props: IDashboardTitle) => {
   )
 }
 
-export default DashboardTitle
+export default ExplainabilityTaskHeader

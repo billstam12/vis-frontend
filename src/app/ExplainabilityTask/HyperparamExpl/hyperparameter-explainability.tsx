@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box"
-import { useAppSelector } from "../../store/store"
-import LinePlot from "../DashboardItems/Plots/line-plot"
-import ContourPlot from "../DashboardItems/Plots/contour-plot"
-import ComparativeEvaluation from "../DashboardItems/Tables/comparative-evaluation"
+import { useAppSelector } from "../../../store/store"
+import LinePlot from "../ExplainabilityItems/Plots/line-plot"
+import ContourPlot from "../ExplainabilityItems/Plots/contour-plot"
+import ComparativeEvaluation from "../ExplainabilityItems/Tables/comparative-evaluation"
 import Grid from "@mui/material/Grid"
 
 const HyperparameterExplainability = () => {

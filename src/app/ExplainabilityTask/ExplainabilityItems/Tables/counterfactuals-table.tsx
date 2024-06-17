@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell, { tableCellClasses } from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
-import { IPlotModel } from "../../../shared/models/plotmodel.model"
+import { IPlotModel } from "../../../../shared/models/plotmodel.model"
 import { styled } from "@mui/styles"
 import grey from "@mui/material/colors/grey"
 

@@ -9,9 +9,9 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import { SetStateAction, useEffect, useState } from "react"
 import FormControl from "@mui/material/FormControl"
-import { IPlotModel } from "../../../shared/models/plotmodel.model"
-import { useAppDispatch } from "../../../store/store"
-import { fetchExplanation } from "../../../store/slices/explainabilitySlice"
+import { IPlotModel } from "../../../../shared/models/plotmodel.model"
+import { useAppDispatch } from "../../../../store/store"
+import { fetchExplanation } from "../../../../store/slices/explainabilitySlice"
 import grey from "@mui/material/colors/grey"
 
 interface ILineplot {

@@ -3,16 +3,16 @@ import { RootState, useAppDispatch, useAppSelector } from "../../store/store"
 import { fetchInitialization } from "../../store/slices/explainabilitySlice"
 import Grid from "@mui/material/Grid"
 import grey from "@mui/material/colors/grey"
-import DashboardTitle from "./dashboard-title"
+import DashboardTitle from "./explainability-header"
 import CircularProgress from "@mui/material/CircularProgress"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import FeatureExplainability from "../FeatureExpl/feature-explainability"
-import HyperparameterExplainability from "../HyperparamExpl/hyperparameter-explainability"
-import DataExploration from "../DataExploration/data-exploration"
+import FeatureExplainability from "./FeatureExpl/feature-explainability"
+import HyperparameterExplainability from "./HyperparamExpl/hyperparameter-explainability"
+import DataExploration from "../DataExplorationTask/data-exploration"
 import { defaultDataExplorationRequest } from "../../shared/models/dataexploration.model"
 
-const Dashboard = () => {
+const ExplainabilityTask = () => {
   const { explInitialization, initLoading, tabs } = useAppSelector(
     state => state.explainability,
   )
@@ -91,4 +91,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default ExplainabilityTask

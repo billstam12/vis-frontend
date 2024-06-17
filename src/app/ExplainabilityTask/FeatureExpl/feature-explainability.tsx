@@ -1,13 +1,13 @@
 import Box from "@mui/material/Box"
-import { useAppDispatch, useAppSelector } from "../../store/store"
-import LinePlot from "../DashboardItems/Plots/line-plot"
+import { useAppDispatch, useAppSelector } from "../../../store/store"
+import LinePlot from "../ExplainabilityItems/Plots/line-plot"
 import Grid from "@mui/material/Grid"
 import { Typography } from "@mui/material"
-import InstanceClassification from "../DashboardItems/Plots/instance-classification"
-import ConfusionMatrix from "../DashboardItems/Plots/confusion-matrix"
+import InstanceClassification from "../ExplainabilityItems/Plots/instance-classification"
+import ConfusionMatrix from "../ExplainabilityItems/Plots/confusion-matrix"
 import { useState } from "react"
-import CounterfactualsTable from "../DashboardItems/Tables/counterfactuals-table"
-import ClassificationStatistics from "../DashboardItems/Tables/model-statistics"
+import CounterfactualsTable from "../ExplainabilityItems/Tables/counterfactuals-table"
+import ClassificationStatistics from "../ExplainabilityItems/Tables/model-statistics"
 
 interface IFeatureExplainability {
   variantId: number
