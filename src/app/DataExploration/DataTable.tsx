@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { Box, Button, IconButton, Paper, Tooltip, Typography } from '@mui/material';
@@ -36,44 +37,6 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
   };
 
   const tableStyle = isMaximized ? { height: '90vh', width: '100%' } : { height: 400, width: '99%' };
-
-  const CustomToolbar = ({ onUpdateData, selectedRows, onResetData }) => {
-   
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
-        <GridToolbar />
-        
-        <Button
-        variant="text"
-        color="primary"
-        onClick={() => onUpdateData(selectedRows)}
-        // style={{ margin: '0 20px' }}
-        size="small"
-
-        >
-          Show Selected
-        </Button>
-        <Button
-        variant="text"
-        color="primary"
-        onClick={onResetData}  // This uses the onResetData function passed as a prop
-        // style={{ margin: '0 20px' }}
-        size="small"
-        >
-          Reset View
-        </Button>
-        <Box>
-          <IconButton onClick={handleMinimize} size="large">
-            <MinimizeIcon />
-          </IconButton>
-          <IconButton onClick={handleMaximize} size="large">
-            {isMaximized ? <FullscreenIcon /> : <FullscreenIcon />}
-          </IconButton>
-        </Box>
-     </Box>
-    );
-  };
-  
   useEffect(() => {
     console.log('Data:', data); // Log the current state of data
   }, [data]);
@@ -83,6 +46,38 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
   }, [columns]);
 
   if (!isVisible) return <IconButton onClick={handleMinimize}><MinimizeIcon /></IconButton>;
+
+  const CustomToolbar = ({ onUpdateData, selectedRows, onResetData }) => {
+   
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 1 }}>
+        <GridToolbar />
+        
+        {/* <Button
+        variant="text"
+        color="primary"
+        onClick={() => onUpdateData(selectedRows)}
+        // style={{ margin: '0 20px' }}
+        size="small"
+
+        >
+          Show Selected
+        </Button> */}
+        {/* <Button
+        variant="text"
+        color="primary"
+        onClick={onResetData}  // This uses the onResetData function passed as a prop
+        // style={{ margin: '0 20px' }}
+        size="small"
+        >
+          Reset View
+        </Button> */}
+     </Box>
+    );
+  };
+  
+  
+
 
  
   return (
@@ -102,7 +97,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
 
 
     <Typography fontSize={"1rem"} fontWeight={600}>
-        Table Viewer
+        Dataset Viewer
     </Typography>
     <Box sx={{ flex: 1 }} />
 
@@ -111,15 +106,22 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
     <InfoIcon />
   </IconButton>
 </Tooltip>
+<IconButton onClick={handleMinimize} size="large">
+        <MinimizeIcon />
+      </IconButton>
+      <IconButton onClick={handleMaximize} size="large">
+        {isMaximized ? <FullscreenIcon /> : <FullscreenIcon />}
+      </IconButton>
 </Box>
-<Box sx={{display: isVisible ? 'block' : 'none', ...tableStyle  }}>
+{isVisible && (
+<Box sx={{...tableStyle  }}>
 
 
 
       <DataGrid
         rows={rows}
         columns={columns}
-        checkboxSelection
+        // checkboxSelection
         slots={{
           toolbar: () => <CustomToolbar onUpdateData={onUpdateData} selectedRows={selectedRows} onResetData={onResetData}  // Pass the reset function as a prop
           />
@@ -134,12 +136,11 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns,onUpdateData,onRese
         {...rows}
       />
     </Box>
+)}
+
     </Paper>
   );
 
 };
 
 export default DataTable;
-
-
-

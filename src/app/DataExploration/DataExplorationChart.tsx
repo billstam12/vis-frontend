@@ -5,6 +5,8 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
 import InfoIcon from "@mui/icons-material/Info"
 import grey from '@mui/material/colors/grey';
+import MinimizeIcon from '@mui/icons-material/Minimize';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 interface Column {
     field: string;
@@ -19,19 +21,24 @@ interface DataExplorationChartProps {
     datetimeColumn: string;
 }
 
-const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, columns, datetimeColumn }) => {
+const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, columns, datetimeColumn,}) => {
     const selectableColumns = columns.filter(column => column.field !== datetimeColumn);
     const initialSelectedColumn = selectableColumns[0]?.field || "";
     const [selectedColumns, setSelectedColumns] = useState<string[]>([initialSelectedColumn]);
-    // const [selectedColumns, setSelectedColumns] = useState<string[]>([selectableColumns[0].field]);
     const [open, setOpen] = useState(false);
     const [mode, setMode] = useState<'overlay' | 'stack'>('overlay');
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [chartType, setChartType] = useState<'line' | 'bar'>('line');
     const [statistics, setStatistics] = useState({});
-    const [showStatistics, setShowStatistics] = useState(false);
+    const [showStatistics, setShowStatistics] = useState(true);
     const [vegaStats, setVegaStats] = useState([]);
+    const [isVisible, setIsVisible] = useState(true); // State for visibility toggle
+    const [isMaximized, setIsMaximized] = useState(false); // State for maximize toggle
+    // const [chartView, setChartView] = useState<'linechart' | 'scatter'>('linechart');
+
+    
+    
     useEffect(() => {
         if (selectedColumns.length && data.length) {
             const newStats = calculateMultipleStatistics(data, selectedColumns);
@@ -48,7 +55,20 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
     }, [data, selectedColumns]);
 
 
-    
+    const filteredData = data.filter(item => {
+        const itemDate = new Date(item[datetimeColumn]);
+        return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+    });
+
+
+    const handleMinimize = () => {
+        setIsVisible(!isVisible); // Toggles the visibility of the chart
+    };
+
+    const handleMaximize = () => {
+        setIsMaximized(!isMaximized); // Toggles maximization of the chart area
+    };
+
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setSelectedColumns(event.target.value as string[]);
         setOpen(false); // Close the dropdown after selection
@@ -65,15 +85,12 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
 
     const handleReset = () => {
         setSelectedColumns([initialSelectedColumn]);
-        setStartDate(null);
-        setEndDate(null);
+        // setStartDate(null);
+        // setEndDate(null);
         setMenuMode('overlay');
     };
 
-    const filteredData = data.filter(item => {
-        const itemDate = new Date(item[datetimeColumn]);
-        return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
-    });
+    
 
     
     const spec: VisualizationSpec = {
@@ -83,10 +100,15 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
         "autosize": { "type": "fit", "contains": "padding", "resize": true },
         "height": 400,
         "data": { "values": filteredData },
+        "params": [{
+                    "name": "grid",
+                    "select": "interval",
+                    "bind": "scales",
+                    
+                }],
         "encoding": {
             "x": { "field": datetimeColumn, "type": "temporal", "title": "Timestamp" },
             "y": { "field": "value", "type": "quantitative", "title": "Value","stack": mode === 'stack' ? 'zero' : null },
-            // "y": { "field": selectedColumns, "type": "quantitative", "stack": mode === 'stack' ? 'zero' : null },
             "color": { "field": "variable", "type": "nominal", "title": "Variable" }
         },
         "layer": [
@@ -98,7 +120,8 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
                         { "field": "value", "type": "quantitative" }
                     ]
                 }
-            }
+            },
+        
         ],
         "transform": [
             {
@@ -122,19 +145,34 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
             height: "100%",
             }}>
         
-            
             <Box sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
-            <Typography fontSize={"1rem"} fontWeight={600}>
-                Linechart Viewer
-            </Typography>
-                    <Box sx={{ flex: 1 }} />
+                <Typography fontSize={"1rem"} fontWeight={600}>
+                    Chart Viewer
+                </Typography>
+            {/* <Typography fontSize={"1rem"} fontWeight={600}>
+                    {chartView === 'linechart' ? 'Linechart Viewer' : 'Scatter View'}
+                </Typography>
+                <FormControlLabel
+                    control={<Switch checked={chartView === 'scatter'} onChange={(event) => setChartView(event.target.checked ? 'scatter' : 'linechart')} />}
+                    label={chartView === 'linechart' ? 'Linechart' : 'Scatter View'}
+                    sx={{ marginLeft: 'auto' }} // Moves the switch to the end of the box
+                /> */}
+            <Box sx={{ flex: 1 }} />
 
             <Tooltip title={"Description not available"}>
             <IconButton>
                 <InfoIcon />
             </IconButton>
             </Tooltip>
+            <IconButton onClick={handleMinimize}>
+                <MinimizeIcon />
+            </IconButton>
+            <IconButton onClick={handleMaximize}>
+                <FullscreenIcon />
+            </IconButton>
             </Box>
+            {isVisible && (
+
             <Box sx={{ width: "99%", px: 1 }}>
 
                 <FormControl sx={{ minWidth: 120 }}>
@@ -159,7 +197,10 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
                     renderValue={(selected) => (
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                             {selected.map((value) => (
-                                <Chip key={value} label={value} onDelete={() => handleChange({
+                                <Chip 
+                                key={value} 
+                                label={value} 
+                                onDelete={() => handleChange({
                                     target: { value: selected.filter(v => v !== value) } as any
                                 } as React.ChangeEvent<{ value: unknown }>)}/>
                             ))}
@@ -172,7 +213,7 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
                         ))}
                     </Select>
                 </FormControl>
-                <LocalizationProvider dateAdapter={AdapterLuxon}>
+                {/* <LocalizationProvider dateAdapter={AdapterLuxon}>
                     <DatePicker
                     label="Start Date"
                     value={startDate}
@@ -183,7 +224,7 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
                     value={endDate}
                     onChange={(newDate: Date | null) => setEndDate(newDate)}
                     />
-                </LocalizationProvider>
+                </LocalizationProvider> */}
                 <FormControlLabel control={
                     <Switch
                     checked={mode === 'stack'}
@@ -214,14 +255,17 @@ const DataExplorationChart: React.FC<DataExplorationChartProps> = ({ data, colum
                     {showStatistics ? 'Hide Statistics' : 'Show Statistics'}
                 </Button>
             </Box>
+            )}
+            {isVisible && (
             <Box sx={{ width: "99%", px: 1 }}>
                 <VegaLite
                 spec={spec} 
                 style={{ width: "100%" }} />
             </Box>
+                    )}
 
-
-            {showStatistics && (
+        
+            {showStatistics && isVisible && (
 
 
             <Box sx={{ width: "100%", px: 1, py: 1 }}>
@@ -276,4 +320,3 @@ function calculateMultipleStatistics(data: any[], columns: string[]) {
     });
     return stats;
   }
-

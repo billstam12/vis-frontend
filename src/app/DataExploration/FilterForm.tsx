@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box, Typography, OutlinedInput, Paper, IconButton, Tooltip } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import InfoIcon from "@mui/icons-material/Info"
+import MinimizeIcon from '@mui/icons-material/Minimize';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 
 const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAllFilters}) => {
     const [selectedColumn, setSelectedColumn] = React.useState('');
     const [filterType, setFilterType] = React.useState('equals');
     const [filterValue, setFilterValue] = React.useState('');
+    const [isVisible, setIsVisible] = useState(true); // State for visibility toggle
+    const [isMaximized, setIsMaximized] = useState(false); // State for maximize toggle
+    const handleMinimize = () => {
+        setIsVisible(!isVisible); // Toggles the visibility of the chart
+    };
+
+    const handleMaximize = () => {
+        setIsMaximized(!isMaximized); // Toggles maximization of the chart area
+    };
   
     const handleAddFilter = () => {
       let value = {};
@@ -60,7 +71,7 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
         height: "99%",
       }}>
 
-<Box sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
+    <Box sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center", borderBottom: `1px solid ${grey[400]}` }}>
 
 
     <Typography fontSize={"1rem"} fontWeight={600}>
@@ -73,7 +84,14 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
     <InfoIcon />
   </IconButton>
 </Tooltip>
+<IconButton onClick={handleMinimize} size="large">
+        <MinimizeIcon />
+      </IconButton>
+      <IconButton onClick={handleMaximize} size="large">
+        {isMaximized ? <FullscreenIcon /> : <FullscreenIcon />}
+      </IconButton>
 </Box>
+{isVisible && (
 <Box>
         <FormControl fullWidth margin="normal">
           <InputLabel>Column</InputLabel>
@@ -130,6 +148,7 @@ const FilterForm = ({ columns, onAddFilter, onRemoveFilter, filters , onRemoveAl
         ))}
       </Box>
       </Box>
+)}
       </Paper>
     );
   };
